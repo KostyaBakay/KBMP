@@ -1,8 +1,10 @@
-package com.kostyabakay.kbmp;
+package com.kostyabakay.kbmp.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,7 +15,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.kostyabakay.kbmp.R;
+import com.kostyabakay.kbmp.adapter.ViewPagerAdapter;
+import com.kostyabakay.kbmp.fragment.PlayTrackFragment;
+import com.kostyabakay.kbmp.fragment.PlaylistFragment;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private PlayTrackFragment mPlayTrackFragment;
+    private PlaylistFragment mPlaylistFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +47,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        initFragments();
+
+        ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
+        pager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
+    }
+
+    private void initFragments() {
+        mPlayTrackFragment = new PlayTrackFragment();
+        mPlaylistFragment = new PlaylistFragment();
     }
 
     @Override
@@ -78,19 +96,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
+        if (id == R.id.play_list) {
+            ft.replace(R.id.container, mPlaylistFragment);
+        } else if (id == R.id.play_track) {
+            ft.replace(R.id.container, mPlayTrackFragment);
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
 
         }
+
+        ft.commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
