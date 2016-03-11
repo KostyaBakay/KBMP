@@ -1,11 +1,8 @@
 package com.kostyabakay.kbmp.activity;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,12 +14,13 @@ import android.view.MenuItem;
 
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.adapter.ViewPagerAdapter;
-import com.kostyabakay.kbmp.fragment.PlayTrackFragment;
-import com.kostyabakay.kbmp.fragment.PlaylistFragment;
 
+/**
+ * Created by Kostya on 09.03.2016.
+ * This class represents the main Activity for application.
+ */
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private PlayTrackFragment mPlayTrackFragment;
-    private PlaylistFragment mPlaylistFragment;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,15 +29,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -47,15 +36,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        initFragments();
 
-        ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
-        pager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
-    }
-
-    private void initFragments() {
-        mPlayTrackFragment = new PlayTrackFragment();
-        mPlaylistFragment = new PlaylistFragment();
+        viewPager = (ViewPager) findViewById(R.id.view_pager);
+        viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
     }
 
     @Override
@@ -99,9 +82,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
         if (id == R.id.play_list) {
-            ft.replace(R.id.container, mPlaylistFragment);
+            viewPager.setCurrentItem(0);
         } else if (id == R.id.play_track) {
-            ft.replace(R.id.container, mPlayTrackFragment);
+            viewPager.setCurrentItem(1);
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {

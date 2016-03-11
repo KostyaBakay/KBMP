@@ -10,6 +10,7 @@ import com.kostyabakay.kbmp.R;
 
 /**
  * Created by Kostya on 10.03.2016.
+ * This class represents the list of different music tracks.
  */
 public class PlaylistFragment extends Fragment {
 

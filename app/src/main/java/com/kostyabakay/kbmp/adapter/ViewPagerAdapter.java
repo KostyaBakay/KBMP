@@ -9,6 +9,8 @@ import com.kostyabakay.kbmp.fragment.PlaylistFragment;
 
 /**
  * Created by Kostya on 10.03.2016.
+ * This class represents the adapter for ViewPager. This adapter gets page position of the ViewPager
+ * and returns created fragment for the corresponding page.
  */
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
