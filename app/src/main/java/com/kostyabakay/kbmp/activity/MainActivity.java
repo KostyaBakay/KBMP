@@ -14,6 +14,7 @@ import android.view.MenuItem;
 
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.adapter.ViewPagerAdapter;
+import com.kostyabakay.kbmp.asynctask.GetJournalAsyncTask;
 
 /**
  * Created by Kostya on 09.03.2016.
@@ -39,6 +40,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
+
+        GetJournalAsyncTask asyncTask = new GetJournalAsyncTask();
+        asyncTask.execute();
     }
 
     @Override
