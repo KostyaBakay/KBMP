@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
 
-        GetJournalAsyncTask asyncTask = new GetJournalAsyncTask();
-        asyncTask.execute();
+        GetJournalAsyncTask getJournalAsyncTask = new GetJournalAsyncTask();
+        getJournalAsyncTask.execute();
     }
 
     @Override

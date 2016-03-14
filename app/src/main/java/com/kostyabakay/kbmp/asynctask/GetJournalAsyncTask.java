@@ -2,9 +2,9 @@ package com.kostyabakay.kbmp.asynctask;
 
 import android.os.AsyncTask;
 
-import com.kostyabakay.kbmp.retrofit.API;
+import com.kostyabakay.kbmp.retrofit.JournalService;
 import com.kostyabakay.kbmp.model.Journal;
-import com.kostyabakay.kbmp.net.URL;
+import com.kostyabakay.kbmp.JournalURL;
 
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -17,14 +17,14 @@ public class GetJournalAsyncTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(URL.BASE_URL) // setServer() is deprecated
+                .setEndpoint(JournalURL.BASE_URL) // setServer() is deprecated
                 .build();
 
-        API api = restAdapter.create(API.class);
+        JournalService journalApi = restAdapter.create(JournalService.class);
 
         try {
-            for (URL url : URL.values()) {
-                Journal journal = api.getJournalInfo(url.getUrl());
+            for (JournalURL url : JournalURL.values()) {
+                Journal journal = journalApi.getJournalInfo(url.getUrl());
                 System.out.println("Journal: " + journal.getTitle());
                 System.out.println("Description: " + journal.getDescription());
             }

@@ -8,7 +8,7 @@ import retrofit.http.Path;
 /**
  * Created by Kostya on 12.03.2016.
  */
-public interface API {
+public interface JournalService {
     @POST("/{url}")
     Journal getJournalInfo(@Path("url") String urlJournal);
 }
