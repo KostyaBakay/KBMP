@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
-        if (id == R.id.play_list) {
+        if (id == R.id.playlist) {
             viewPager.setCurrentItem(0);
         } else if (id == R.id.play_track) {
             viewPager.setCurrentItem(1);
