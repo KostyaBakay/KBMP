@@ -13,7 +13,7 @@ public class Tracks {
 
     @SerializedName("track")
     @Expose
-    private List<Track> track = new ArrayList<Track>();
+    private List<Track> trackList = new ArrayList<Track>();
     @SerializedName("@attr")
     @Expose
     private com.kostyabakay.kbmp.model.chart.top.tracks.Attr Attr;
@@ -22,14 +22,14 @@ public class Tracks {
      * @return The track
      */
     public List<Track> getTrack() {
-        return track;
+        return trackList;
     }
 
     /**
      * @param track The track
      */
     public void setTrack(List<Track> track) {
-        this.track = track;
+        this.trackList = track;
     }
 
     /**

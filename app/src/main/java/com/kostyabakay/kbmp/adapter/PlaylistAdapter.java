@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by Kostya on 15.03.2016.
  */
-public class PlaylistAdapter extends ArrayAdapter<String> {
+public class PlaylistAdapter extends ArrayAdapter<Track> {
     private Context mContext;
     private List<Track> mTracks;
 
@@ -32,9 +32,9 @@ public class PlaylistAdapter extends ArrayAdapter<String> {
     }
 
     @Override
-    public String getItem(int position) {
+    public Track getItem(int position) {
         // Gets one element at index
-        return mTracks.get(position).getMbid();
+        return mTracks.get(position);
     }
 
     @Override
@@ -46,9 +46,9 @@ public class PlaylistAdapter extends ArrayAdapter<String> {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.playlist_item, parent, false);
-        TextView songName = (TextView)view.findViewById(R.id.playlist_item_id);
+        TextView songId = (TextView) view.findViewById(R.id.playlist_item_id);
         Track track = mTracks.get(position);
-        songName.setText(track.getMbid());
+        songId.setText(track.getMbid());
         return view;
     }
 

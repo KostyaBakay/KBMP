@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.kostyabakay.kbmp.fragment.PlayTrackFragment;
 import com.kostyabakay.kbmp.fragment.PlaylistFragment;
+import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
 
 /**
  * Created by Kostya on 10.03.2016.
@@ -13,25 +14,56 @@ import com.kostyabakay.kbmp.fragment.PlaylistFragment;
  * and returns created fragment for the corresponding page.
  */
 public class ViewPagerAdapter extends FragmentPagerAdapter {
+    private Fragment mPlaylistFragment, mPlayTrackFragment;
+    private Track mCurrentTrack;
 
     public ViewPagerAdapter(FragmentManager fm) {
         super(fm);
+    }
+
+    public Track getCurrentTrack() {
+        return mCurrentTrack;
+    }
+
+    public void setCurrentTrack(Track track) {
+        this.mCurrentTrack = track;
     }
 
     @Override
     public Fragment getItem(int pos) {
         switch (pos) {
             case 0:
-                return PlaylistFragment.newInstance();
+                return getPlaylistFragment();
             case 1:
-                return PlayTrackFragment.newInstance();
+                return getPlayTrackFragment();
             default:
-                return PlaylistFragment.newInstance();
+                return getPlaylistFragment();
         }
     }
 
     @Override
     public int getCount() {
         return 2;
+    }
+
+    public void updateViewPagerAdapter(int position) {
+        // TODO: Memory leak
+        if (position == 1) {
+            ((PlayTrackFragment) getItem(1)).updatePlayTrackFragment();
+        }
+    }
+
+    public Fragment getPlaylistFragment() {
+        if (mPlaylistFragment == null) {
+            mPlaylistFragment = PlaylistFragment.newInstance();
+        }
+        return mPlaylistFragment;
+    }
+
+    public Fragment getPlayTrackFragment() {
+        if (mPlayTrackFragment == null) {
+            mPlayTrackFragment = PlayTrackFragment.newInstance();
+        }
+        return mPlayTrackFragment;
     }
 }
