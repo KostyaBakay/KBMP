@@ -1,10 +1,10 @@
 package com.kostyabakay.kbmp.activity;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.adapter.ViewPagerAdapter;
 import com.kostyabakay.kbmp.asynctask.GetJournalAsyncTask;
-import com.kostyabakay.kbmp.asynctask.GetTopTracksAsyncTask;
 
 /**
  * Created by Kostya on 09.03.2016.
@@ -65,9 +64,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         GetJournalAsyncTask getJournalAsyncTask = new GetJournalAsyncTask();
         getJournalAsyncTask.execute();
-
-        GetTopTracksAsyncTask getTopTracksAsyncTask = new GetTopTracksAsyncTask();
-        getTopTracksAsyncTask.execute();
     }
 
     @Override

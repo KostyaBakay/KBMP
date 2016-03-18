@@ -1,14 +1,16 @@
 package com.kostyabakay.kbmp.asynctask;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 
+import com.kostyabakay.kbmp.Constants;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Attr;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Tracks;
 import com.kostyabakay.kbmp.model.chart.top.tracks.TracksResponse;
 import com.kostyabakay.kbmp.retrofit.LastFmService;
-import com.kostyabakay.kbmp.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.RestAdapter;
@@ -16,16 +18,24 @@ import retrofit.RetrofitError;
 
 /**
  * Created by Kostya on 16.03.2016.
+ * This AsyncTask uses GET method for Chart.getTopTracks query.
  */
-public class GetTopTracksAsyncTask extends AsyncTask<Void, Void, Void> {
+public class GetTopTracksAsyncTask extends AsyncTask<Void, Void, ArrayList<Track>> {
+    private Activity mActivity;
+    public ArrayList<Track> mTracks;
+
+    public GetTopTracksAsyncTask(Activity activity) {
+        this.mActivity = activity;
+    }
 
     @Override
-    protected Void doInBackground(Void... params) {
+    protected ArrayList doInBackground(Void... params) {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(Constants.LAST_FM_BASE_URL) // setServer() is deprecated
                 .build();
 
         LastFmService lastFmApi = restAdapter.create(LastFmService.class);
+        mTracks = new ArrayList<>();
 
         try {
             TracksResponse response = lastFmApi.getTopTracks();
@@ -35,8 +45,12 @@ public class GetTopTracksAsyncTask extends AsyncTask<Void, Void, Void> {
             List<Track> tracksList = tracksResponse.getTrack();
             Attr attr = tracksResponse.getAttr();
 
+            int id = 1;
             for (Track track : tracksList) {
                 System.out.println("Track: " + track.getName());
+                track.setMbid(Integer.toString(id));
+                mTracks.add(track);
+                id++;
             }
 
         } catch (RetrofitError error) {
@@ -49,6 +63,16 @@ public class GetTopTracksAsyncTask extends AsyncTask<Void, Void, Void> {
             }
         }
 
-        return null;
+        return mTracks;
+    }
+
+    @Override
+    protected void onPostExecute(ArrayList<Track> tracks) {
+        super.onPostExecute(tracks);
+        getTopTracks();
+    }
+
+    public ArrayList<Track> getTopTracks() {
+        return mTracks;
     }
 }

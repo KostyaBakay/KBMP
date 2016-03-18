@@ -12,10 +12,11 @@ import android.widget.ListView;
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.activity.MainActivity;
 import com.kostyabakay.kbmp.adapter.PlaylistAdapter;
-import com.kostyabakay.kbmp.model.chart.top.tracks.Artist;
+import com.kostyabakay.kbmp.asynctask.GetTopTracksAsyncTask;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Kostya on 10.03.2016.
@@ -44,15 +45,14 @@ public class PlaylistFragment extends Fragment {
         Log.d(PlaylistFragment.class.getSimpleName(), "onStart");
         ArrayList<Track> mTracks = new ArrayList<>();
 
-        for (int i = 1; i < 51; i++) {
-            Track track = new Track();
-            Artist artist = new Artist();
-            track.setMbid("#" + i);
-            artist.setName("Artist: " + i);
-            track.setArtist(artist);
-            track.setName("Song: " + i);
-            track.setDuration("Length of song: " + i);
-            mTracks.add(track);
+        try {
+            GetTopTracksAsyncTask getTopTracksAsyncTask = new GetTopTracksAsyncTask(getActivity());
+            getTopTracksAsyncTask.execute().get();
+            mTracks = getTopTracksAsyncTask.getTopTracks();
+        } catch (InterruptedException e) {
+            Log.e(PlaylistFragment.class.getSimpleName(), "InterruptedException");
+        } catch (ExecutionException e) {
+            Log.e(PlaylistFragment.class.getSimpleName(), "ExecutionException");
         }
 
         mPlaylistAdapter = new PlaylistAdapter(getActivity(), mTracks);

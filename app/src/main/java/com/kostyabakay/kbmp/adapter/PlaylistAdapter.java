@@ -8,18 +8,20 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.kostyabakay.kbmp.R;
+import com.kostyabakay.kbmp.model.chart.top.tracks.Artist;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by Kostya on 15.03.2016.
+ * This is adapter for PlaylistFragment.
  */
 public class PlaylistAdapter extends ArrayAdapter<Track> {
     private Context mContext;
-    private List<Track> mTracks;
+    private ArrayList<Track> mTracks;
 
-    public PlaylistAdapter(Context context, List<Track> tracks) {
+    public PlaylistAdapter(Context context, ArrayList<Track> tracks) {
         super(context, R.layout.playlist_item);
         this.mContext = context;
         this.mTracks = tracks;
@@ -47,8 +49,13 @@ public class PlaylistAdapter extends ArrayAdapter<Track> {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.playlist_item, parent, false);
         TextView songId = (TextView) view.findViewById(R.id.playlist_item_id);
+        TextView artistName = (TextView) view.findViewById(R.id.playlist_artist_name);
+        TextView songName = (TextView) view.findViewById(R.id.playlist_song_name);
         Track track = mTracks.get(position);
+        Artist artist = track.getArtist();
         songId.setText(track.getMbid());
+        artistName.setText(artist.getName());
+        songName.setText(track.getName());
         return view;
     }
 
