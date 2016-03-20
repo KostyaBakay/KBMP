@@ -16,6 +16,10 @@ import android.view.MenuItem;
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.adapter.ViewPagerAdapter;
 import com.kostyabakay.kbmp.asynctask.GetJournalAsyncTask;
+import com.kostyabakay.kbmp.fragment.VKAuthorizationFragment;
+import com.vk.sdk.util.VKUtil;
+
+import java.util.Arrays;
 
 /**
  * Created by Kostya on 09.03.2016.
@@ -24,6 +28,7 @@ import com.kostyabakay.kbmp.asynctask.GetJournalAsyncTask;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private ViewPager mViewPager;
     private ViewPagerAdapter mViewPagerAdapter;
+    private VKAuthorizationFragment vkAuthorizationFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        startVkComponents();
 
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -110,7 +117,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
-        if (id == R.id.playlist) {
+        if (id == R.id.vk_authorization) {
+            ft.replace(R.id.container, vkAuthorizationFragment);
+        } else if (id == R.id.playlist) {
             mViewPager.setCurrentItem(0);
         } else if (id == R.id.play_track) {
             mViewPager.setCurrentItem(1);
@@ -135,5 +144,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public ViewPager getViewPager() {
         Log.d(MainActivity.class.getSimpleName(), "getViewPager");
         return mViewPager;
+    }
+
+    private void startVkComponents() {
+        getFingerPrints();
+        vkAuthorizationFragment = new VKAuthorizationFragment();
+    }
+
+    private void getFingerPrints() {
+        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
+        System.out.println("Fingerprints: " + Arrays.asList(fingerprints));
     }
 }

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">KBMP</string>
+    <integer name="com_vk_sdk_AppId">5366456</integer>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

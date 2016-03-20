@@ -3,6 +3,10 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/vk_authorization"
+            android:icon="@mipmap/ic_vk"
+            android:title="vk.com log in" />
+        <item
             android:id="@+id/playlist"
             android:icon="@drawable/ic_menu_camera"
             android:title="Playlist" />
