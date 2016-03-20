@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.activity.MainActivity;
+import com.kostyabakay.kbmp.audio.AudioPlayer;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Artist;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
 
@@ -22,10 +23,12 @@ import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
  */
 public class PlayTrackFragment extends Fragment implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     private TextView mArtistNameTextView, mSongNameTextView, mSongCurrentTimeTextView, mSongDurationTextView;
+    private AudioPlayer mAudioPlayer = new AudioPlayer();
     private Track mTrack;
     private Artist mArtist;
     private SeekBar mTimelineSeekBar;
     private ImageView mSkipPreviousSongImageView, mPlaySongImageView, mSkipNextSongImageView;
+    private boolean isSongPlayed;
 
     public static PlayTrackFragment newInstance() {
         PlayTrackFragment fragment = new PlayTrackFragment();
@@ -55,8 +58,28 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
 
         mTimelineSeekBar.setOnSeekBarChangeListener(this);
         mSkipPreviousSongImageView.setOnClickListener(this);
-        mPlaySongImageView.setOnClickListener(this);
         mSkipNextSongImageView.setOnClickListener(this);
+
+        mPlaySongImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isSongPlayed) {
+                    mAudioPlayer.play(getActivity());
+                    mPlaySongImageView.setImageResource(R.mipmap.ic_pause_light);
+                    isSongPlayed = true;
+                } else {
+                    mAudioPlayer.stop();
+                    mPlaySongImageView.setImageResource(R.mipmap.ic_play_light);
+                    isSongPlayed = false;
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mAudioPlayer.stop();
     }
 
     @Override
