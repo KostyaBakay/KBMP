@@ -28,7 +28,7 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private ViewPager mViewPager;
     private ViewPagerAdapter mViewPagerAdapter;
-    private VKAuthorizationFragment vkAuthorizationFragment;
+    private VKAuthorizationFragment mVkAuthorizationFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
         if (id == R.id.vk_authorization) {
-            ft.replace(R.id.container, vkAuthorizationFragment);
+            ft.replace(R.id.container, mVkAuthorizationFragment);
         } else if (id == R.id.playlist) {
             mViewPager.setCurrentItem(0);
         } else if (id == R.id.play_track) {
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void startVkComponents() {
         getFingerPrints();
-        vkAuthorizationFragment = new VKAuthorizationFragment();
+        mVkAuthorizationFragment = new VKAuthorizationFragment();
     }
 
     private void getFingerPrints() {

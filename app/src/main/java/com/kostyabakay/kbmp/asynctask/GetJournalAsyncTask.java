@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 
 import com.kostyabakay.kbmp.retrofit.JournalService;
 import com.kostyabakay.kbmp.model.Journal;
-import com.kostyabakay.kbmp.JournalURL;
+import com.kostyabakay.kbmp.util.JournalURL;
 
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;

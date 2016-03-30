@@ -1,4 +1,4 @@
-package com.kostyabakay.kbmp;
+package com.kostyabakay.kbmp.util;
 
 /**
  * Created by Kostya on 16.03.2016.

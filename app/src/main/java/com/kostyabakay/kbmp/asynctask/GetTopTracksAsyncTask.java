@@ -3,7 +3,7 @@ package com.kostyabakay.kbmp.asynctask;
 import android.app.Activity;
 import android.os.AsyncTask;
 
-import com.kostyabakay.kbmp.Constants;
+import com.kostyabakay.kbmp.util.Constants;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Attr;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Tracks;

@@ -79,6 +79,7 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(PlayTrackFragment.class.getSimpleName(), "onDestroy");
         mAudioPlayer.stop();
     }
 

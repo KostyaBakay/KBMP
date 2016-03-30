@@ -1,7 +1,7 @@
 package com.kostyabakay.kbmp.retrofit;
 
 import com.kostyabakay.kbmp.model.chart.top.tracks.TracksResponse;
-import com.kostyabakay.kbmp.Constants;
+import com.kostyabakay.kbmp.util.Constants;
 
 import retrofit.http.GET;
 
