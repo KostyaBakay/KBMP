@@ -1,7 +1,5 @@
 package com.kostyabakay.kbmp.fragment;
 
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -17,12 +15,12 @@ import com.kostyabakay.kbmp.adapter.PlaylistAdapter;
 import com.kostyabakay.kbmp.asynctask.GetTopTracksAsyncTask;
 import com.kostyabakay.kbmp.model.VkTrack;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
+import com.kostyabakay.kbmp.util.AppData;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -70,9 +68,12 @@ public class PlaylistFragment extends Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                AppData.isSongPlayed = true;
                 Track track = mPlaylistAdapter.getItem(position);
                 ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrack(track);
                 ((MainActivity) getActivity()).getViewPager().setCurrentItem(1);
+
+                if (AppData.isSongPlayed) AppData.mAudioPlayer.stop();
 
                 VKRequest searchSongRequest = new VKRequest("audio.search", VKParameters.from(VKApiConst.Q, track.getName()));
                 searchSongRequest.executeWithListener(new VKRequest.VKRequestListener() {
@@ -81,33 +82,28 @@ public class PlaylistFragment extends Fragment {
                         super.onComplete(response);
                         ArrayList<VkTrack> trackList = VkTrack.parseJSON(response.responseString);
                         String song;
-                        String songUrl = null;
 
                         if (trackList != null) {
                             song = trackList.get(0).getArtist() + " - " + trackList.get(0).getTitle();
-                            songUrl = trackList.get(0).getUrl();
+                            AppData.songUrl = trackList.get(0).getUrl();
                             Log.d(PlaylistFragment.class.getSimpleName(), song);
-                            Log.d(PlaylistFragment.class.getSimpleName(), songUrl);
+                            Log.d(PlaylistFragment.class.getSimpleName(), AppData.songUrl);
                         } else {
                             Log.e(PlaylistFragment.class.getSimpleName(), "trackList is null");
                         }
 
-                        MediaPlayer mMediaPlayer = new MediaPlayer();
-                        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-                        try {
-                            if (songUrl != null) {
-                                mMediaPlayer.setDataSource(songUrl);
-                            }
-
-                            mMediaPlayer.prepare(); // Might take long! (for buffering, etc)
-                            mMediaPlayer.start();
-                        } catch (IOException e) {
-                            Log.e(PlaylistFragment.class.getSimpleName(), "IOException in onComplete method");
-                        }
+                        AppData.mAudioPlayer.play(getActivity(), AppData.songUrl);
+                        AppData.isSongPlayed = true;
                     }
                 });
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(PlaylistFragment.class.getSimpleName(), "onDestroy");
+        AppData.mAudioPlayer.stop();
     }
 }
