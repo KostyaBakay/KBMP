@@ -15,18 +15,10 @@ import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
  */
 public class ViewPagerAdapter extends FragmentPagerAdapter {
     private Fragment mPlaylistFragment, mPlayTrackFragment;
-    private Track mCurrentTrack;
+    private Track mPreviousTrack, mCurrentTrack, mNextTrack;
 
     public ViewPagerAdapter(FragmentManager fm) {
         super(fm);
-    }
-
-    public Track getCurrentTrack() {
-        return mCurrentTrack;
-    }
-
-    public void setCurrentTrack(Track track) {
-        this.mCurrentTrack = track;
     }
 
     @Override
@@ -65,5 +57,29 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             mPlayTrackFragment = PlayTrackFragment.newInstance();
         }
         return mPlayTrackFragment;
+    }
+
+    public Track getPreviousTrack() {
+        return mPreviousTrack;
+    }
+
+    public void setPreviousTrack(Track track) {
+        this.mPreviousTrack = track;
+    }
+
+    public Track getCurrentTrack() {
+        return mCurrentTrack;
+    }
+
+    public void setCurrentTrack(Track track) {
+        this.mCurrentTrack = track;
+    }
+
+    public Track getNextTrack() {
+        return mNextTrack;
+    }
+
+    public void setNextTrack(Track track) {
+        this.mNextTrack = track;
     }
 }

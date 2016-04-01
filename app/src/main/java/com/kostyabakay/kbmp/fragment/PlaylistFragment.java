@@ -69,13 +69,19 @@ public class PlaylistFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 AppData.isSongPlayed = true;
-                Track track = mPlaylistAdapter.getItem(position);
-                ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrack(track);
+                Track previousTrack = mPlaylistAdapter.getItem(position - 1);
+                Track currentTrack = mPlaylistAdapter.getItem(position);
+                Track nextTrack = mPlaylistAdapter.getItem(position + 1);
+
+                ((MainActivity) getActivity()).getViewPagerAdapter().setPreviousTrack(previousTrack);
+                ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrack(currentTrack);
+                ((MainActivity) getActivity()).getViewPagerAdapter().setNextTrack(nextTrack);
+
                 ((MainActivity) getActivity()).getViewPager().setCurrentItem(1);
 
-                if (AppData.isSongPlayed) AppData.mAudioPlayer.stop();
+                if (AppData.isSongPlayed) AppData.audioPlayer.stop();
 
-                VKRequest searchSongRequest = new VKRequest("audio.search", VKParameters.from(VKApiConst.Q, track.getName()));
+                VKRequest searchSongRequest = new VKRequest("audio.search", VKParameters.from(VKApiConst.Q, currentTrack.getName()));
                 searchSongRequest.executeWithListener(new VKRequest.VKRequestListener() {
                     @Override
                     public void onComplete(VKResponse response) {
@@ -92,7 +98,7 @@ public class PlaylistFragment extends Fragment {
                             Log.e(PlaylistFragment.class.getSimpleName(), "trackList is null");
                         }
 
-                        AppData.mAudioPlayer.play(getActivity(), AppData.songUrl);
+                        AppData.audioPlayer.play(getActivity(), AppData.songUrl);
                         AppData.isSongPlayed = true;
                     }
                 });
@@ -104,6 +110,6 @@ public class PlaylistFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         Log.d(PlaylistFragment.class.getSimpleName(), "onDestroy");
-        AppData.mAudioPlayer.stop();
+        AppData.audioPlayer.stop();
     }
 }

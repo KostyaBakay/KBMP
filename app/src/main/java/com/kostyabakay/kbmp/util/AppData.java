@@ -7,7 +7,7 @@ import com.kostyabakay.kbmp.audio.AudioPlayer;
  * This class represents some important application data.
  */
 public class AppData {
-    public static AudioPlayer mAudioPlayer = new AudioPlayer();
+    public static AudioPlayer audioPlayer = new AudioPlayer();
     public static boolean isSongPlayed;
     public static String songUrl;
 }

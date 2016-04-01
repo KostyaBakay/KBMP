@@ -13,9 +13,16 @@ import android.widget.Toast;
 
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.activity.MainActivity;
+import com.kostyabakay.kbmp.model.VkTrack;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Artist;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
 import com.kostyabakay.kbmp.util.AppData;
+import com.vk.sdk.api.VKApiConst;
+import com.vk.sdk.api.VKParameters;
+import com.vk.sdk.api.VKRequest;
+import com.vk.sdk.api.VKResponse;
+
+import java.util.ArrayList;
 
 /**
  * Created by Kostya on 10.03.2016.
@@ -23,8 +30,8 @@ import com.kostyabakay.kbmp.util.AppData;
  */
 public class PlayTrackFragment extends Fragment implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     private TextView mArtistNameTextView, mSongNameTextView, mSongCurrentTimeTextView, mSongDurationTextView;
-    private Track mTrack;
-    private Artist mArtist;
+    private Track mPreviousTrack, mCurrentTrack, mNextTrack;
+    private Artist mPreviousArtist, mCurrentArtist, mNextArtist;
     private SeekBar mTimelineSeekBar;
     private ImageView mSkipPreviousSongImageView, mPlaySongImageView, mSkipNextSongImageView;
 
@@ -58,18 +65,83 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         mSkipPreviousSongImageView.setOnClickListener(this);
         mSkipNextSongImageView.setOnClickListener(this);
 
+        mSkipPreviousSongImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Track previousTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getPreviousTrack();
+                mPreviousTrack = previousTrack;
+
+                VKRequest searchSongRequest = new VKRequest("audio.search", VKParameters.from(VKApiConst.Q, mPreviousTrack.getName()));
+                searchSongRequest.executeWithListener(new VKRequest.VKRequestListener() {
+                    @Override
+                    public void onComplete(VKResponse response) {
+                        super.onComplete(response);
+                        ArrayList<VkTrack> trackList = VkTrack.parseJSON(response.responseString);
+                        String song;
+
+                        if (trackList != null) {
+                            song = trackList.get(0).getArtist() + " - " + trackList.get(0).getTitle();
+                            AppData.songUrl = trackList.get(0).getUrl();
+                            Log.d(PlaylistFragment.class.getSimpleName(), song);
+                            Log.d(PlaylistFragment.class.getSimpleName(), AppData.songUrl);
+                        } else {
+                            Log.e(PlaylistFragment.class.getSimpleName(), "trackList is null");
+                        }
+
+                        AppData.audioPlayer.play(getActivity(), AppData.songUrl);
+                        AppData.isSongPlayed = true;
+                    }
+                });
+
+                updatePlayTrackFragmentPrevious();
+            }
+        });
+
         mPlaySongImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!AppData.isSongPlayed) {
                     mPlaySongImageView.setImageResource(R.mipmap.ic_pause_light);
-                    AppData.mAudioPlayer.play(getActivity(), AppData.songUrl);
+                    AppData.audioPlayer.play(getActivity(), AppData.songUrl);
                     AppData.isSongPlayed = true;
                 } else {
                     mPlaySongImageView.setImageResource(R.mipmap.ic_play_light);
-                    AppData.mAudioPlayer.stop();
+                    AppData.audioPlayer.stop();
                     AppData.isSongPlayed = false;
                 }
+            }
+        });
+
+        mSkipNextSongImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Track nextTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getNextTrack();
+                mNextTrack = nextTrack;
+                VKRequest searchSongRequest = new VKRequest("audio.search", VKParameters.from(VKApiConst.Q, mNextTrack.getName()));
+
+                searchSongRequest.executeWithListener(new VKRequest.VKRequestListener() {
+                    @Override
+                    public void onComplete(VKResponse response) {
+                        super.onComplete(response);
+                        ArrayList<VkTrack> trackList = VkTrack.parseJSON(response.responseString);
+                        String song;
+
+                        if (trackList != null) {
+                            song = trackList.get(0).getArtist() + " - " + trackList.get(0).getTitle();
+                            AppData.songUrl = trackList.get(0).getUrl();
+                            Log.d(PlaylistFragment.class.getSimpleName(), song);
+                            Log.d(PlaylistFragment.class.getSimpleName(), AppData.songUrl);
+                        } else {
+                            Log.e(PlaylistFragment.class.getSimpleName(), "trackList is null");
+                        }
+
+                        AppData.audioPlayer.play(getActivity(), AppData.songUrl);
+                        AppData.isSongPlayed = true;
+                    }
+                });
+
+                updatePlayTrackFragmentNext();
+                
             }
         });
     }
@@ -78,7 +150,7 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
     public void onDestroy() {
         super.onDestroy();
         Log.d(PlayTrackFragment.class.getSimpleName(), "onDestroy");
-        AppData.mAudioPlayer.stop();
+        AppData.audioPlayer.stop();
     }
 
     @Override
@@ -96,14 +168,38 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         }
     }
 
+    public void updatePlayTrackFragmentPrevious() {
+        Track currentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getPreviousTrack();
+        if (currentTrack != null) {
+            mPreviousTrack = currentTrack;
+            mPreviousArtist = mPreviousTrack.getArtist();
+            mArtistNameTextView.setText(mPreviousArtist.getName());
+            mSongNameTextView.setText(mPreviousTrack.getName());
+            mSongDurationTextView.setText(mPreviousTrack.getDuration());
+            updateView();
+        }
+    }
+
     public void updatePlayTrackFragment() {
         Track currentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrack();
         if (currentTrack != null) {
-            mTrack = currentTrack;
-            mArtist = mTrack.getArtist();
-            mArtistNameTextView.setText(mArtist.getName());
-            mSongNameTextView.setText(mTrack.getName());
-            mSongDurationTextView.setText(mTrack.getDuration());
+            mCurrentTrack = currentTrack;
+            mCurrentArtist = mCurrentTrack.getArtist();
+            mArtistNameTextView.setText(mCurrentArtist.getName());
+            mSongNameTextView.setText(mCurrentTrack.getName());
+            mSongDurationTextView.setText(mCurrentTrack.getDuration());
+            updateView();
+        }
+    }
+
+    public void updatePlayTrackFragmentNext() {
+        Track currentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getNextTrack();
+        if (currentTrack != null) {
+            mNextTrack = currentTrack;
+            mNextArtist = mNextTrack.getArtist();
+            mArtistNameTextView.setText(mNextArtist.getName());
+            mSongNameTextView.setText(mNextTrack.getName());
+            mSongDurationTextView.setText(mNextTrack.getDuration());
             updateView();
         }
     }
