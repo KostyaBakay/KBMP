@@ -62,6 +62,7 @@ public class PlaylistFragment extends Fragment {
         }
 
         mPlaylistAdapter = new PlaylistAdapter(getActivity(), mTracks);
+        ((MainActivity) getActivity()).getViewPagerAdapter().setTracks(mTracks);
         mListView = (ListView) getActivity().findViewById(R.id.playlist_list_view);
         mListView.setAdapter(mPlaylistAdapter);
 
@@ -69,14 +70,9 @@ public class PlaylistFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 AppData.isSongPlayed = true;
-                Track previousTrack = mPlaylistAdapter.getItem(position - 1);
                 Track currentTrack = mPlaylistAdapter.getItem(position);
-                Track nextTrack = mPlaylistAdapter.getItem(position + 1);
-
-                ((MainActivity) getActivity()).getViewPagerAdapter().setPreviousTrack(previousTrack);
                 ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrack(currentTrack);
-                ((MainActivity) getActivity()).getViewPagerAdapter().setNextTrack(nextTrack);
-
+                ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrackItemIndex(position);
                 ((MainActivity) getActivity()).getViewPager().setCurrentItem(1);
 
                 if (AppData.isSongPlayed) AppData.audioPlayer.stop();

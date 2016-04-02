@@ -29,11 +29,15 @@ import java.util.ArrayList;
  * This class represents the view for playing music track.
  */
 public class PlayTrackFragment extends Fragment implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+    private final int FIRST_SONG_INDEX = 0;
+    private final int LAST_SONG_INDEX = 49;
     private TextView mArtistNameTextView, mSongNameTextView, mSongCurrentTimeTextView, mSongDurationTextView;
+    private ArrayList<Track> mTracks;
     private Track mPreviousTrack, mCurrentTrack, mNextTrack;
-    private Artist mPreviousArtist, mCurrentArtist, mNextArtist;
+    private Artist mCurrentArtist;
     private SeekBar mTimelineSeekBar;
     private ImageView mSkipPreviousSongImageView, mPlaySongImageView, mSkipNextSongImageView;
+    private int mCurrentTrackPosition;
 
     public static PlayTrackFragment newInstance() {
         PlayTrackFragment fragment = new PlayTrackFragment();
@@ -68,8 +72,19 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         mSkipPreviousSongImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Track previousTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getPreviousTrack();
-                mPreviousTrack = previousTrack;
+                mTracks = ((MainActivity) getActivity()).getViewPagerAdapter().getTracks();
+                mCurrentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrack();
+                mCurrentTrackPosition = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrackItemIndex();
+
+                if (mCurrentTrackPosition > FIRST_SONG_INDEX) {
+                    mPreviousTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getPreviousTrack(mCurrentTrackPosition);
+                    mCurrentTrackPosition--;
+                } else {
+                    mPreviousTrack = mCurrentTrack;
+                }
+
+                ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrack(mPreviousTrack);
+                ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrackItemIndex(mCurrentTrackPosition);
 
                 VKRequest searchSongRequest = new VKRequest("audio.search", VKParameters.from(VKApiConst.Q, mPreviousTrack.getName()));
                 searchSongRequest.executeWithListener(new VKRequest.VKRequestListener() {
@@ -93,7 +108,7 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
                     }
                 });
 
-                updatePlayTrackFragmentPrevious();
+                updatePlayTrackFragment();
             }
         });
 
@@ -115,10 +130,21 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         mSkipNextSongImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Track nextTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getNextTrack();
-                mNextTrack = nextTrack;
-                VKRequest searchSongRequest = new VKRequest("audio.search", VKParameters.from(VKApiConst.Q, mNextTrack.getName()));
+                mTracks = ((MainActivity) getActivity()).getViewPagerAdapter().getTracks();
+                mCurrentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrack();
+                mCurrentTrackPosition = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrackItemIndex();
 
+                if (mCurrentTrackPosition < LAST_SONG_INDEX) {
+                    mNextTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getNextTrack(mCurrentTrackPosition);
+                    mCurrentTrackPosition++;
+                } else {
+                    mNextTrack = mCurrentTrack;
+                }
+
+                ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrack(mNextTrack);
+                ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrackItemIndex(mCurrentTrackPosition);
+
+                VKRequest searchSongRequest = new VKRequest("audio.search", VKParameters.from(VKApiConst.Q, mNextTrack.getName()));
                 searchSongRequest.executeWithListener(new VKRequest.VKRequestListener() {
                     @Override
                     public void onComplete(VKResponse response) {
@@ -140,7 +166,7 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
                     }
                 });
 
-                updatePlayTrackFragmentNext();
+                updatePlayTrackFragment();
                 
             }
         });
@@ -168,38 +194,13 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    public void updatePlayTrackFragmentPrevious() {
-        Track currentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getPreviousTrack();
-        if (currentTrack != null) {
-            mPreviousTrack = currentTrack;
-            mPreviousArtist = mPreviousTrack.getArtist();
-            mArtistNameTextView.setText(mPreviousArtist.getName());
-            mSongNameTextView.setText(mPreviousTrack.getName());
-            mSongDurationTextView.setText(mPreviousTrack.getDuration());
-            updateView();
-        }
-    }
-
     public void updatePlayTrackFragment() {
-        Track currentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrack();
-        if (currentTrack != null) {
-            mCurrentTrack = currentTrack;
+        mCurrentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrack();
+        if (mCurrentTrack != null) {
             mCurrentArtist = mCurrentTrack.getArtist();
-            mArtistNameTextView.setText(mCurrentArtist.getName());
+            mArtistNameTextView.setText(mCurrentTrack.getArtist().getName());
             mSongNameTextView.setText(mCurrentTrack.getName());
             mSongDurationTextView.setText(mCurrentTrack.getDuration());
-            updateView();
-        }
-    }
-
-    public void updatePlayTrackFragmentNext() {
-        Track currentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getNextTrack();
-        if (currentTrack != null) {
-            mNextTrack = currentTrack;
-            mNextArtist = mNextTrack.getArtist();
-            mArtistNameTextView.setText(mNextArtist.getName());
-            mSongNameTextView.setText(mNextTrack.getName());
-            mSongDurationTextView.setText(mNextTrack.getDuration());
             updateView();
         }
     }
