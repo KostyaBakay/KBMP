@@ -17,6 +17,7 @@ import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.adapter.ViewPagerAdapter;
 import com.kostyabakay.kbmp.fragment.VkAuthorizationFragment;
 import com.kostyabakay.kbmp.network.asynctask.GetJournalAsyncTask;
+import com.vk.sdk.VKSdk;
 import com.vk.sdk.util.VKUtil;
 
 import java.util.Arrays;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setupUI();
         startVkComponents();
         listenViewPager();
+        checkUserLogIn();
 
         // This lines enable simple retrofit example
         GetJournalAsyncTask getJournalAsyncTask = new GetJournalAsyncTask();
@@ -111,6 +113,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
+    }
+
+    /**
+     * Checks if user logged in application using vk.com account. If user didn't logged in app will
+     * show fragment for authorization.
+     */
+    private void checkUserLogIn() {
+        if (!VKSdk.isLoggedIn()) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.container, mVkAuthorizationFragment);
+            ft.commit();
+        }
     }
 
     @Override
