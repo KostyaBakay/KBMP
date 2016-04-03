@@ -1,8 +1,8 @@
-package com.kostyabakay.kbmp.asynctask;
+package com.kostyabakay.kbmp.network.asynctask;
 
 import android.os.AsyncTask;
 
-import com.kostyabakay.kbmp.retrofit.JournalService;
+import com.kostyabakay.kbmp.network.retrofit.JournalService;
 import com.kostyabakay.kbmp.model.Journal;
 import com.kostyabakay.kbmp.util.JournalURL;
 
@@ -11,6 +11,7 @@ import retrofit.RetrofitError;
 
 /**
  * Created by Kostya on 12.03.2016.
+ * This is simple retrofit example.
  */
 public class GetJournalAsyncTask extends AsyncTask<Void, Void, Void> {
 

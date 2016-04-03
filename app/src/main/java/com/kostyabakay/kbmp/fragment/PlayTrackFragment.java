@@ -13,14 +13,10 @@ import android.widget.Toast;
 
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.activity.MainActivity;
-import com.kostyabakay.kbmp.model.VkTrack;
+import com.kostyabakay.kbmp.network.asynctask.PlayTrackAsyncTask;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Artist;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
 import com.kostyabakay.kbmp.util.AppData;
-import com.vk.sdk.api.VKApiConst;
-import com.vk.sdk.api.VKParameters;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
 
 import java.util.ArrayList;
 
@@ -41,8 +37,8 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
 
     public static PlayTrackFragment newInstance() {
         PlayTrackFragment fragment = new PlayTrackFragment();
-        Bundle b = new Bundle();
-        fragment.setArguments(b);
+        Bundle bundle = new Bundle();
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -56,120 +52,150 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
     public void onStart() {
         super.onStart();
         Log.d(PlayTrackFragment.class.getSimpleName(), "onStart");
+        setupUI();
+    }
+
+    /**
+     * Initialization of view elements.
+     */
+    private void setupUI() {
+        setupSeekBar();
+        setupTextView();
+        setupImageView();
+        listenImageViewButtons();
+    }
+
+    /**
+     * Initialization of the SeekBar.
+     */
+    private void setupSeekBar() {
         mTimelineSeekBar = (SeekBar) getActivity().findViewById(R.id.timeline_seekbar);
+        mTimelineSeekBar.setOnSeekBarChangeListener(this);
+    }
+
+    /**
+     * Initialization of the TextView views.
+     */
+    private void setupTextView() {
         mArtistNameTextView = (TextView) getActivity().findViewById(R.id.play_track_artist_name_text_view);
         mSongNameTextView = (TextView) getActivity().findViewById(R.id.play_track_song_name_text_view);
         mSongCurrentTimeTextView = (TextView) getActivity().findViewById(R.id.play_track_song_current_time_text_view);
         mSongDurationTextView = (TextView) getActivity().findViewById(R.id.play_track_song_duration_text_view);
+    }
+
+    /**
+     * Initialization of the ImageView views.
+     */
+    private void setupImageView() {
         mSkipPreviousSongImageView = (ImageView) getActivity().findViewById(R.id.skip_previous_song_image_button);
         mPlaySongImageView = (ImageView) getActivity().findViewById(R.id.play_song_image_button);
         mSkipNextSongImageView = (ImageView) getActivity().findViewById(R.id.skip_next_song_image_button);
-
-        mTimelineSeekBar.setOnSeekBarChangeListener(this);
         mSkipPreviousSongImageView.setOnClickListener(this);
         mSkipNextSongImageView.setOnClickListener(this);
+    }
 
+    /**
+     * There are listeners for ImageView buttons.
+     */
+    private void listenImageViewButtons() {
+        listenPreviousSongButton();
+        listenPlaySongButton();
+        listenNextSongButton();
+    }
+
+    /**
+     * This is listener for button which chooses previous song.
+     */
+    private void listenPreviousSongButton() {
         mSkipPreviousSongImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTracks = ((MainActivity) getActivity()).getViewPagerAdapter().getTracks();
-                mCurrentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrack();
-                mCurrentTrackPosition = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrackItemIndex();
-
-                if (mCurrentTrackPosition > FIRST_SONG_INDEX) {
-                    mPreviousTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getPreviousTrack(mCurrentTrackPosition);
-                    mCurrentTrackPosition--;
-                } else {
-                    mPreviousTrack = mCurrentTrack;
-                }
-
-                ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrack(mPreviousTrack);
-                ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrackItemIndex(mCurrentTrackPosition);
-
-                VKRequest searchSongRequest = new VKRequest("audio.search", VKParameters.from(VKApiConst.Q, mPreviousTrack.getName()));
-                searchSongRequest.executeWithListener(new VKRequest.VKRequestListener() {
-                    @Override
-                    public void onComplete(VKResponse response) {
-                        super.onComplete(response);
-                        ArrayList<VkTrack> trackList = VkTrack.parseJSON(response.responseString);
-                        String song;
-
-                        if (trackList != null) {
-                            song = trackList.get(0).getArtist() + " - " + trackList.get(0).getTitle();
-                            AppData.songUrl = trackList.get(0).getUrl();
-                            Log.d(PlaylistFragment.class.getSimpleName(), song);
-                            Log.d(PlaylistFragment.class.getSimpleName(), AppData.songUrl);
-                        } else {
-                            Log.e(PlaylistFragment.class.getSimpleName(), "trackList is null");
-                        }
-
-                        AppData.audioPlayer.play(getActivity(), AppData.songUrl);
-                        AppData.isSongPlayed = true;
-                    }
-                });
-
+                getCurrentTrack();
+                changePreviousTrackToCurrent();
+                updateViewPagerAdapter(mPreviousTrack, mCurrentTrackPosition);
+                playSong(mPreviousTrack.getName());
                 updatePlayTrackFragment();
             }
         });
+    }
 
+    /**
+     * This is listener for button which plays song or makes pause.
+     */
+    private void listenPlaySongButton() {
         mPlaySongImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!AppData.isSongPlayed) {
                     mPlaySongImageView.setImageResource(R.mipmap.ic_pause_light);
-                    AppData.audioPlayer.play(getActivity(), AppData.songUrl);
+                    AppData.audioPlayer.resume();
                     AppData.isSongPlayed = true;
                 } else {
                     mPlaySongImageView.setImageResource(R.mipmap.ic_play_light);
-                    AppData.audioPlayer.stop();
+                    AppData.audioPlayer.pause();
                     AppData.isSongPlayed = false;
                 }
             }
         });
+    }
 
+    /**
+     * This is listener for button which chooses next song.
+     */
+    private void listenNextSongButton() {
         mSkipNextSongImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTracks = ((MainActivity) getActivity()).getViewPagerAdapter().getTracks();
-                mCurrentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrack();
-                mCurrentTrackPosition = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrackItemIndex();
-
-                if (mCurrentTrackPosition < LAST_SONG_INDEX) {
-                    mNextTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getNextTrack(mCurrentTrackPosition);
-                    mCurrentTrackPosition++;
-                } else {
-                    mNextTrack = mCurrentTrack;
-                }
-
-                ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrack(mNextTrack);
-                ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrackItemIndex(mCurrentTrackPosition);
-
-                VKRequest searchSongRequest = new VKRequest("audio.search", VKParameters.from(VKApiConst.Q, mNextTrack.getName()));
-                searchSongRequest.executeWithListener(new VKRequest.VKRequestListener() {
-                    @Override
-                    public void onComplete(VKResponse response) {
-                        super.onComplete(response);
-                        ArrayList<VkTrack> trackList = VkTrack.parseJSON(response.responseString);
-                        String song;
-
-                        if (trackList != null) {
-                            song = trackList.get(0).getArtist() + " - " + trackList.get(0).getTitle();
-                            AppData.songUrl = trackList.get(0).getUrl();
-                            Log.d(PlaylistFragment.class.getSimpleName(), song);
-                            Log.d(PlaylistFragment.class.getSimpleName(), AppData.songUrl);
-                        } else {
-                            Log.e(PlaylistFragment.class.getSimpleName(), "trackList is null");
-                        }
-
-                        AppData.audioPlayer.play(getActivity(), AppData.songUrl);
-                        AppData.isSongPlayed = true;
-                    }
-                });
-
+                getCurrentTrack();
+                changeNextTrackToCurrent();
+                updateViewPagerAdapter(mNextTrack, mCurrentTrackPosition);
+                playSong(mNextTrack.getName());
                 updatePlayTrackFragment();
-                
             }
         });
+    }
+
+    /**
+     * Gets chosen track and his position from tracks list at ViewPager.
+     */
+    private void getCurrentTrack() {
+        mTracks = ((MainActivity) getActivity()).getViewPagerAdapter().getTracks();
+        mCurrentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrack();
+        mCurrentTrackPosition = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrackItemIndex();
+    }
+
+    /**
+     * Previous track becomes current track.
+     */
+    private void changePreviousTrackToCurrent() {
+        if (mCurrentTrackPosition > FIRST_SONG_INDEX) {
+            mPreviousTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getPreviousTrack(mCurrentTrackPosition);
+            mCurrentTrackPosition--;
+        } else {
+            mPreviousTrack = mCurrentTrack;
+        }
+    }
+
+    /**
+     * Next track becomes current track.
+     */
+    private void changeNextTrackToCurrent() {
+        if (mCurrentTrackPosition < LAST_SONG_INDEX) {
+            mNextTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getNextTrack(mCurrentTrackPosition);
+            mCurrentTrackPosition++;
+        } else {
+            mNextTrack = mCurrentTrack;
+        }
+    }
+
+    /**
+     * Updates ViewPagerAdapter with current track.
+     * @param track
+     * @param position
+     */
+    private void updateViewPagerAdapter(Track track, int position) {
+        ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrack(track);
+        ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrackItemIndex(position);
     }
 
     @Override
@@ -194,6 +220,18 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         }
     }
 
+    /**
+     * Plays song from vk.com with corresponding name.
+     * @param trackName
+     */
+    private void playSong(String trackName) {
+        PlayTrackAsyncTask playTrackAsyncTask = new PlayTrackAsyncTask(getActivity());
+        playTrackAsyncTask.execute(trackName);
+    }
+
+    /**
+     * Updates PlayTrackFragment with information about current track.
+     */
     public void updatePlayTrackFragment() {
         mCurrentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrack();
         if (mCurrentTrack != null) {
@@ -201,11 +239,14 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
             mArtistNameTextView.setText(mCurrentTrack.getArtist().getName());
             mSongNameTextView.setText(mCurrentTrack.getName());
             mSongDurationTextView.setText(mCurrentTrack.getDuration());
-            updateView();
+            updatePlayButton();
         }
     }
 
-    private void updateView() {
+    /**
+     * Updates image for ImageView PlayButton.
+     */
+    private void updatePlayButton() {
         if (AppData.isSongPlayed) {
             mPlaySongImageView.setImageResource(R.mipmap.ic_pause_light);
         } else {

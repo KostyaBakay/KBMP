@@ -16,7 +16,6 @@ import java.io.IOException;
  */
 public class AudioPlayer {
     private MediaPlayer mMediaPlayer;
-    private Uri songUri;
 
     /**
      * Plays local audio file.
@@ -48,7 +47,7 @@ public class AudioPlayer {
 
         try {
             if (url != null) {
-                songUri = Uri.parse(url);
+                Uri songUri = Uri.parse(url);
                 mMediaPlayer.setDataSource(context, songUri);
                 mMediaPlayer.prepare(); // Might take long! (for buffering, etc)
                 mMediaPlayer.start();
@@ -67,7 +66,21 @@ public class AudioPlayer {
     }
 
     /**
-     * Stops playing audio.
+     * Resumes playing audio file.
+     */
+    public void resume() {
+        mMediaPlayer.start();
+    }
+
+    /**
+     * Makes pause of playing audio file.
+     */
+    public void pause() {
+        mMediaPlayer.pause();
+    }
+
+    /**
+     * Stops playing audio file.
      */
     public void stop() {
         if (mMediaPlayer != null) {

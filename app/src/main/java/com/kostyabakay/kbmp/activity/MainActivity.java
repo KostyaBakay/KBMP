@@ -15,8 +15,8 @@ import android.view.MenuItem;
 
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.adapter.ViewPagerAdapter;
-import com.kostyabakay.kbmp.asynctask.GetJournalAsyncTask;
-import com.kostyabakay.kbmp.fragment.VKAuthorizationFragment;
+import com.kostyabakay.kbmp.fragment.VkAuthorizationFragment;
+import com.kostyabakay.kbmp.network.asynctask.GetJournalAsyncTask;
 import com.vk.sdk.util.VKUtil;
 
 import java.util.Arrays;
@@ -26,32 +26,75 @@ import java.util.Arrays;
  * This class represents the main Activity for application.
  */
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private Toolbar mToolbar;
     private ViewPager mViewPager;
     private ViewPagerAdapter mViewPagerAdapter;
-    private VKAuthorizationFragment mVkAuthorizationFragment;
+    private VkAuthorizationFragment mVkAuthorizationFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(MainActivity.class.getSimpleName(), "onCreate");
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setupUI();
+        startVkComponents();
+        listenViewPager();
 
+        // This lines enable simple retrofit example
+        GetJournalAsyncTask getJournalAsyncTask = new GetJournalAsyncTask();
+        getJournalAsyncTask.execute();
+    }
+
+    /**
+     * Initialization of view elements.
+     */
+    private void setupUI() {
+        setContentView(R.layout.activity_main);
+        setupToolbar();
+        setupDrawerLayout();
+        setupNavigationView();
+        setupViewPager();
+    }
+
+    /**
+     * Initialization of Toolbar.
+     */
+    private void setupToolbar() {
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+    }
+
+    /**
+     * Initialization of DrawerLayout.
+     */
+    private void setupDrawerLayout() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, mToolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+    }
 
+    /**
+     * Initialization of NavigationView.
+     */
+    private void setupNavigationView() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
 
-        startVkComponents();
-
+    /**
+     * Initialization of ViewPager.
+     */
+    private void setupViewPager() {
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mViewPagerAdapter);
+    }
 
+    /**
+     * This is listener for the ViewPager.
+     */
+    private void listenViewPager() {
         mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -68,9 +111,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
-
-        GetJournalAsyncTask getJournalAsyncTask = new GetJournalAsyncTask();
-        getJournalAsyncTask.execute();
     }
 
     @Override
@@ -148,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void startVkComponents() {
         getFingerPrints();
-        mVkAuthorizationFragment = new VKAuthorizationFragment();
+        mVkAuthorizationFragment = new VkAuthorizationFragment();
     }
 
     private void getFingerPrints() {

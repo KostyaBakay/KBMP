@@ -1,4 +1,4 @@
-package com.kostyabakay.kbmp.retrofit;
+package com.kostyabakay.kbmp.network.retrofit;
 
 import com.kostyabakay.kbmp.model.Journal;
 

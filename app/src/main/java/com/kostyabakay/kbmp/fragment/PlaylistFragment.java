@@ -12,14 +12,10 @@ import android.widget.ListView;
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.activity.MainActivity;
 import com.kostyabakay.kbmp.adapter.PlaylistAdapter;
-import com.kostyabakay.kbmp.asynctask.GetTopTracksAsyncTask;
-import com.kostyabakay.kbmp.model.VkTrack;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
+import com.kostyabakay.kbmp.network.asynctask.GetTopTracksAsyncTask;
+import com.kostyabakay.kbmp.network.asynctask.PlayTrackAsyncTask;
 import com.kostyabakay.kbmp.util.AppData;
-import com.vk.sdk.api.VKApiConst;
-import com.vk.sdk.api.VKParameters;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -31,11 +27,14 @@ import java.util.concurrent.ExecutionException;
 public class PlaylistFragment extends Fragment {
     private PlaylistAdapter mPlaylistAdapter;
     private ListView mListView;
+    private ArrayList<Track> mTracks = new ArrayList<>();
+    private Track mCurrentTrack;
+    private int mTrackPosition;
 
     public static PlaylistFragment newInstance() {
         PlaylistFragment fragment = new PlaylistFragment();
-        Bundle b = new Bundle();
-        fragment.setArguments(b);
+        Bundle bundle = new Bundle();
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -49,8 +48,23 @@ public class PlaylistFragment extends Fragment {
     public void onStart() {
         super.onStart();
         Log.d(PlaylistFragment.class.getSimpleName(), "onStart");
-        ArrayList<Track> mTracks = new ArrayList<>();
+        setupUI();
+        getTopTracks();
+        setTopTracksToListView();
+        listenUI();
+    }
 
+    /**
+     * Initialization of view elements.
+     */
+    private void setupUI() {
+        mListView = (ListView) getActivity().findViewById(R.id.playlist_list_view);
+    }
+
+    /**
+     * Gets top tracks from last.fm with chart.getTopTracks API method.
+     */
+    private void getTopTracks() {
         try {
             GetTopTracksAsyncTask getTopTracksAsyncTask = new GetTopTracksAsyncTask(getActivity());
             getTopTracksAsyncTask.execute().get();
@@ -60,46 +74,63 @@ public class PlaylistFragment extends Fragment {
         } catch (ExecutionException e) {
             Log.e(PlaylistFragment.class.getSimpleName(), "ExecutionException");
         }
+    }
 
+    /**
+     * Sets ArrayList of top tracks to ListView using PlaylistAdapter.
+     */
+    private void setTopTracksToListView() {
         mPlaylistAdapter = new PlaylistAdapter(getActivity(), mTracks);
         ((MainActivity) getActivity()).getViewPagerAdapter().setTracks(mTracks);
-        mListView = (ListView) getActivity().findViewById(R.id.playlist_list_view);
         mListView.setAdapter(mPlaylistAdapter);
+    }
 
+    /**
+     * This is listener for the user interface.
+     */
+    private void listenUI() {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                AppData.isSongPlayed = true;
-                Track currentTrack = mPlaylistAdapter.getItem(position);
-                ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrack(currentTrack);
-                ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrackItemIndex(position);
-                ((MainActivity) getActivity()).getViewPager().setCurrentItem(1);
-
-                if (AppData.isSongPlayed) AppData.audioPlayer.stop();
-
-                VKRequest searchSongRequest = new VKRequest("audio.search", VKParameters.from(VKApiConst.Q, currentTrack.getName()));
-                searchSongRequest.executeWithListener(new VKRequest.VKRequestListener() {
-                    @Override
-                    public void onComplete(VKResponse response) {
-                        super.onComplete(response);
-                        ArrayList<VkTrack> trackList = VkTrack.parseJSON(response.responseString);
-                        String song;
-
-                        if (trackList != null) {
-                            song = trackList.get(0).getArtist() + " - " + trackList.get(0).getTitle();
-                            AppData.songUrl = trackList.get(0).getUrl();
-                            Log.d(PlaylistFragment.class.getSimpleName(), song);
-                            Log.d(PlaylistFragment.class.getSimpleName(), AppData.songUrl);
-                        } else {
-                            Log.e(PlaylistFragment.class.getSimpleName(), "trackList is null");
-                        }
-
-                        AppData.audioPlayer.play(getActivity(), AppData.songUrl);
-                        AppData.isSongPlayed = true;
-                    }
-                });
+                mTrackPosition = position; // Makes global information about item position
+                updateAudioPlayer();
+                setCurrentTrack();
+                playTrack();
+                updateViewPager();
             }
         });
+    }
+
+    /**
+     * Updates AudioPlayer data.
+     */
+    private void updateAudioPlayer() {
+        if (AppData.isSongPlayed) AppData.audioPlayer.stop();
+        AppData.isSongPlayed = true;
+    }
+
+    /**
+     * Sets current track using information about track position.
+     */
+    private void setCurrentTrack() {
+        mCurrentTrack = mPlaylistAdapter.getItem(mTrackPosition);
+    }
+
+    /**
+     * Plays track from vk.com using data from last.fm.
+     */
+    private void playTrack() {
+        PlayTrackAsyncTask playTrackAsyncTask = new PlayTrackAsyncTask(getActivity());
+        playTrackAsyncTask.execute(mCurrentTrack.getName());
+    }
+
+    /**
+     * Updates ViewPager corresponding of the user action.
+     */
+    private void updateViewPager() {
+        ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrack(mCurrentTrack);
+        ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrackItemIndex(mTrackPosition);
+        ((MainActivity) getActivity()).getViewPager().setCurrentItem(1);
     }
 
     @Override

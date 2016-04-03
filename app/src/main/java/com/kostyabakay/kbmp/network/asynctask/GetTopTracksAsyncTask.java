@@ -1,4 +1,4 @@
-package com.kostyabakay.kbmp.asynctask;
+package com.kostyabakay.kbmp.network.asynctask;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -8,7 +8,7 @@ import com.kostyabakay.kbmp.model.chart.top.tracks.Attr;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Tracks;
 import com.kostyabakay.kbmp.model.chart.top.tracks.TracksResponse;
-import com.kostyabakay.kbmp.retrofit.LastFmService;
+import com.kostyabakay.kbmp.network.retrofit.LastFmService;
 
 import java.util.ArrayList;
 import java.util.List;
