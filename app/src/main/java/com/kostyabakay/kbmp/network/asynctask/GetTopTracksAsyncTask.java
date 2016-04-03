@@ -1,6 +1,7 @@
 package com.kostyabakay.kbmp.network.asynctask;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
 import com.kostyabakay.kbmp.util.Constants;
@@ -22,10 +23,21 @@ import retrofit.RetrofitError;
  */
 public class GetTopTracksAsyncTask extends AsyncTask<Void, Void, ArrayList<Track>> {
     private Activity mActivity;
+    private ProgressDialog mProgressDialog;
     public ArrayList<Track> mTracks;
 
     public GetTopTracksAsyncTask(Activity activity) {
         this.mActivity = activity;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        mProgressDialog = new ProgressDialog(mActivity);
+        mProgressDialog.setTitle("Last.fm top tracks");
+        mProgressDialog.setMessage("Downloading...");
+        mProgressDialog.setIndeterminate(false);
+        mProgressDialog.show();
     }
 
     @Override
@@ -69,6 +81,7 @@ public class GetTopTracksAsyncTask extends AsyncTask<Void, Void, ArrayList<Track
     @Override
     protected void onPostExecute(ArrayList<Track> tracks) {
         super.onPostExecute(tracks);
+        mProgressDialog.dismiss();
         getTopTracks();
     }
 
