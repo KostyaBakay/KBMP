@@ -1,6 +1,8 @@
 package com.kostyabakay.kbmp.fragment;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,9 +15,9 @@ import android.widget.Toast;
 
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.activity.MainActivity;
-import com.kostyabakay.kbmp.network.asynctask.PlayTrackAsyncTask;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Artist;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
+import com.kostyabakay.kbmp.network.asynctask.PlayTrackAsyncTask;
 import com.kostyabakay.kbmp.util.AppData;
 
 import java.util.ArrayList;
@@ -27,13 +29,15 @@ import java.util.ArrayList;
 public class PlayTrackFragment extends Fragment implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     private final int FIRST_SONG_INDEX = 0;
     private final int LAST_SONG_INDEX = 49;
+    private MediaPlayer mMediaPlayer;
+    private Handler mHandler = new Handler();
     private TextView mArtistNameTextView, mSongNameTextView, mSongCurrentTimeTextView, mSongDurationTextView;
     private ArrayList<Track> mTracks;
     private Track mPreviousTrack, mCurrentTrack, mNextTrack;
     private Artist mCurrentArtist;
     private SeekBar mTimelineSeekBar;
     private ImageView mSkipPreviousSongImageView, mPlaySongImageView, mSkipNextSongImageView;
-    private int mCurrentTrackPosition;
+    private int mCurrentTrackPosition, mTotalDuration;
 
     public static PlayTrackFragment newInstance() {
         PlayTrackFragment fragment = new PlayTrackFragment();
@@ -62,6 +66,7 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         setupSeekBar();
         setupTextView();
         setupImageView();
+        playLocalFile();
         listenImageViewButtons();
     }
 
@@ -92,6 +97,22 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         mSkipNextSongImageView = (ImageView) getActivity().findViewById(R.id.skip_next_song_image_button);
         mSkipPreviousSongImageView.setOnClickListener(this);
         mSkipNextSongImageView.setOnClickListener(this);
+    }
+
+    /**
+     * Plays local file and updates SeekBar. This is only training method.
+     */
+    private void playLocalFile() {
+        mMediaPlayer = MediaPlayer.create(getActivity(), R.raw.one_small_step);
+        mMediaPlayer.start();
+
+        mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            public void onPrepared(MediaPlayer mp) {
+                mTotalDuration = mp.getDuration();
+                mTimelineSeekBar.setMax(mTotalDuration);
+                mHandler.postDelayed(runnable, 100);
+            }
+        });
     }
 
     /**
@@ -190,6 +211,7 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
 
     /**
      * Updates ViewPagerAdapter with current track.
+     *
      * @param track
      * @param position
      */
@@ -222,6 +244,7 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
 
     /**
      * Plays song from vk.com with corresponding name.
+     *
      * @param trackName
      */
     private void playSong(String trackName) {
@@ -254,9 +277,24 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         }
     }
 
+    /**
+     * This method handles SeekBar in real time mode.
+     */
+    private Runnable runnable = new Runnable() {
+        public void run() {
+            int progress = mMediaPlayer.getCurrentPosition();
+            mTimelineSeekBar.setProgress(progress);
+            mHandler.postDelayed(this, 100);
+        }
+    };
+
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        mSongCurrentTimeTextView.setText(String.valueOf(progress));
+        mSongCurrentTimeTextView.setText(String.valueOf(progress / 1000));
+
+        if (fromUser) {
+            mMediaPlayer.seekTo(progress);
+        }
     }
 
     @Override
