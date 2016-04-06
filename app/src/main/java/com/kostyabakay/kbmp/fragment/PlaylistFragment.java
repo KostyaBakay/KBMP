@@ -121,7 +121,16 @@ public class PlaylistFragment extends Fragment {
      */
     private void playTrack() {
         PlayTrackAsyncTask playTrackAsyncTask = new PlayTrackAsyncTask(getActivity());
-        playTrackAsyncTask.execute(mCurrentTrack.getName());
+        playTrackAsyncTask.execute(createFullSongName());
+    }
+
+    /**
+     * Creates full name of the song using artist name, splitter and song name.
+     *
+     * @return String with full song name.
+     */
+    private String createFullSongName() {
+        return mCurrentTrack.getArtist().getName() + " - " + mCurrentTrack.getName();
     }
 
     /**
