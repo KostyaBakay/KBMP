@@ -88,4 +88,8 @@ public class AudioPlayer {
             mMediaPlayer = null;
         }
     }
+
+    public MediaPlayer getMediaPlayer() {
+        return mMediaPlayer;
+    }
 }

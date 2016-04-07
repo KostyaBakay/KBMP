@@ -121,7 +121,7 @@ public class PlaylistFragment extends Fragment {
      */
     private void playTrack() {
         PlayTrackAsyncTask playTrackAsyncTask = new PlayTrackAsyncTask(getActivity());
-        playTrackAsyncTask.execute(createFullSongName());
+        playTrackAsyncTask.execute(createCurrentSongFullName());
     }
 
     /**
@@ -129,7 +129,7 @@ public class PlaylistFragment extends Fragment {
      *
      * @return String with full song name.
      */
-    private String createFullSongName() {
+    private String createCurrentSongFullName() {
         return mCurrentTrack.getArtist().getName() + " - " + mCurrentTrack.getName();
     }
 

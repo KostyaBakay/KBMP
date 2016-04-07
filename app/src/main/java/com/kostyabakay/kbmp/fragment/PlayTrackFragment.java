@@ -66,7 +66,7 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         setupSeekBar();
         setupTextView();
         setupImageView();
-        playLocalFile();
+        // playLocalFile(); // This is just for testing SeekBar with local audio file
         listenImageViewButtons();
     }
 
@@ -131,11 +131,15 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         mSkipPreviousSongImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getCurrentTrack();
-                changePreviousTrackToCurrent();
-                updateViewPagerAdapter(mPreviousTrack, mCurrentTrackPosition);
-                playSong(mPreviousTrack.getName());
-                updatePlayTrackFragment();
+                if (AppData.audioPlayer.getMediaPlayer() != null) {
+                    getCurrentTrack();
+                    changePreviousTrackToCurrent();
+                    updateViewPagerAdapter(mPreviousTrack, mCurrentTrackPosition);
+                    playSong(createPreviousSongFullName());
+                    updatePlayTrackFragment();
+                } else {
+                    Toast.makeText(getActivity(), "Please choose song!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -147,14 +151,18 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         mPlaySongImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!AppData.isSongPlayed) {
-                    mPlaySongImageView.setImageResource(R.mipmap.ic_pause_light);
-                    AppData.audioPlayer.resume();
-                    AppData.isSongPlayed = true;
+                if (AppData.audioPlayer.getMediaPlayer() != null) {
+                    if (!AppData.isSongPlayed) {
+                        mPlaySongImageView.setImageResource(R.mipmap.ic_pause_light);
+                        AppData.audioPlayer.resume();
+                        AppData.isSongPlayed = true;
+                    } else {
+                        mPlaySongImageView.setImageResource(R.mipmap.ic_play_light);
+                        AppData.audioPlayer.pause();
+                        AppData.isSongPlayed = false;
+                    }
                 } else {
-                    mPlaySongImageView.setImageResource(R.mipmap.ic_play_light);
-                    AppData.audioPlayer.pause();
-                    AppData.isSongPlayed = false;
+                    Toast.makeText(getActivity(), "Please choose song!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -167,11 +175,15 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         mSkipNextSongImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getCurrentTrack();
-                changeNextTrackToCurrent();
-                updateViewPagerAdapter(mNextTrack, mCurrentTrackPosition);
-                playSong(mNextTrack.getName());
-                updatePlayTrackFragment();
+                if (AppData.audioPlayer.getMediaPlayer() != null) {
+                    getCurrentTrack();
+                    changeNextTrackToCurrent();
+                    updateViewPagerAdapter(mNextTrack, mCurrentTrackPosition);
+                    playSong(createNextSongFullName());
+                    updatePlayTrackFragment();
+                } else {
+                    Toast.makeText(getActivity(), "Please choose song!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -183,6 +195,24 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         mTracks = ((MainActivity) getActivity()).getViewPagerAdapter().getTracks();
         mCurrentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrack();
         mCurrentTrackPosition = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrackItemIndex();
+    }
+
+    /**
+     * Creates full name of the previous song using artist name, splitter and song name.
+     *
+     * @return String with full song name.
+     */
+    private String createPreviousSongFullName() {
+        return mPreviousTrack.getArtist().getName() + " - " + mPreviousTrack.getName();
+    }
+
+    /**
+     * Creates full name of the next song using artist name, splitter and song name.
+     *
+     * @return String with full song name.
+     */
+    private String createNextSongFullName() {
+        return mNextTrack.getArtist().getName() + " - " + mNextTrack.getName();
     }
 
     /**
@@ -292,9 +322,11 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         mSongCurrentTimeTextView.setText(String.valueOf(progress / 1000));
 
+        /* This code needs just for playLocalFile method.
         if (fromUser) {
             mMediaPlayer.seekTo(progress);
         }
+        */
     }
 
     @Override
