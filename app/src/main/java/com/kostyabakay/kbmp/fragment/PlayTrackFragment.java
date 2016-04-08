@@ -16,11 +16,14 @@ import android.widget.Toast;
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.activity.MainActivity;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Artist;
+import com.kostyabakay.kbmp.model.chart.top.tracks.Image;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
+import com.kostyabakay.kbmp.network.asynctask.DownloadArtistImageAsyncTask;
 import com.kostyabakay.kbmp.network.asynctask.PlayTrackAsyncTask;
 import com.kostyabakay.kbmp.util.AppData;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Kostya on 10.03.2016.
@@ -292,8 +295,27 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
             mArtistNameTextView.setText(mCurrentTrack.getArtist().getName());
             mSongNameTextView.setText(mCurrentTrack.getName());
             mSongDurationTextView.setText(mCurrentTrack.getDuration());
+            updateArtistImage();
             updatePlayButton();
         }
+    }
+
+    /**
+     * This method updates artist image on PlayTrackFragment. Every track on Last.fm contains a few
+     * same images with artist, but these images have different quality. They stored in list and
+     * the first element contain URL for low quality image, the second for better quality, the third
+     * for much better quality and etc. The last element of list contains URL for the best quality
+     * of artist image.
+     * Later we pass URL of the best quality image to AsyncTask and this AsyncTask will download
+     * this image and update PlayTrackFragment with this artist image.
+     */
+    private void updateArtistImage() {
+        List<Image> images = mCurrentTrack.getImage();
+        Image image = images.get(images.size() - 1);
+
+        new DownloadArtistImageAsyncTask((ImageView) getActivity()
+                .findViewById(R.id.artist_image_view_headset))
+                .execute(image.getText());
     }
 
     /**
