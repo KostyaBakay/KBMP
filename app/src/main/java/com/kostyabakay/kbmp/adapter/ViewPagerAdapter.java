@@ -4,9 +4,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.kostyabakay.kbmp.fragment.LocalTracksFragment;
 import com.kostyabakay.kbmp.fragment.PlayTrackFragment;
 import com.kostyabakay.kbmp.fragment.PlaylistFragment;
+import com.kostyabakay.kbmp.fragment.BasicFirstItemViewPagerFragment;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
+import com.kostyabakay.kbmp.util.AppData;
+import com.kostyabakay.kbmp.util.Constants;
 
 import java.util.ArrayList;
 
@@ -16,7 +20,7 @@ import java.util.ArrayList;
  * and returns created fragment for the corresponding page.
  */
 public class ViewPagerAdapter extends FragmentPagerAdapter {
-    private Fragment mPlaylistFragment, mPlayTrackFragment;
+    private Fragment mPlaylistFragment, mPlayTrackFragment, mLocalTracksFragment, mBasicFirstItemViewPagerFragment;
     private ArrayList<Track> mTracks = new ArrayList<>();
     private Track mPreviousTrack, mCurrentTrack, mNextTrack;
     private int mCurrentTrackItemIndex;
@@ -29,11 +33,11 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int pos) {
         switch (pos) {
             case 0:
-                return getPlaylistFragment();
+                return getFirstItemViewPager();
             case 1:
                 return getPlayTrackFragment();
             default:
-                return getPlaylistFragment();
+                return getFirstItemViewPager();
         }
     }
 
@@ -49,6 +53,23 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
+    public Fragment getFirstItemViewPager() {
+        if (AppData.selectedNavigationDrawerItem == Constants.LAST_FM_TOP_TRACKS) {
+            return getPlaylistFragment();
+        } else if (AppData.selectedNavigationDrawerItem == Constants.USER_LOCAL_TRACKS) {
+            return getLocalTracksFragment();
+        } else {
+            return getBasicFirstItemViewPager();
+        }
+    }
+
+    public Fragment getBasicFirstItemViewPager() {
+        if (mBasicFirstItemViewPagerFragment == null) {
+            mBasicFirstItemViewPagerFragment = BasicFirstItemViewPagerFragment.newInstance();
+        }
+        return mBasicFirstItemViewPagerFragment;
+    }
+
     public Fragment getPlaylistFragment() {
         if (mPlaylistFragment == null) {
             mPlaylistFragment = PlaylistFragment.newInstance();
@@ -61,6 +82,13 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
             mPlayTrackFragment = PlayTrackFragment.newInstance();
         }
         return mPlayTrackFragment;
+    }
+
+    public Fragment getLocalTracksFragment() {
+        if (mLocalTracksFragment == null) {
+            mLocalTracksFragment = LocalTracksFragment.newInstance();
+        }
+        return mLocalTracksFragment;
     }
 
     public ArrayList<Track> getTracks() {

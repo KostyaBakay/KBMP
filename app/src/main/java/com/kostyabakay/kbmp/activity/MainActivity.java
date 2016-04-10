@@ -15,8 +15,12 @@ import android.view.MenuItem;
 
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.adapter.ViewPagerAdapter;
+import com.kostyabakay.kbmp.fragment.LocalTracksFragment;
+import com.kostyabakay.kbmp.fragment.PlaylistFragment;
 import com.kostyabakay.kbmp.fragment.VkAuthorizationFragment;
 import com.kostyabakay.kbmp.network.asynctask.GetJournalAsyncTask;
+import com.kostyabakay.kbmp.util.AppData;
+import com.kostyabakay.kbmp.util.Constants;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.util.VKUtil;
 
@@ -174,9 +178,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.vk_authorization) {
             ft.replace(R.id.container, mVkAuthorizationFragment);
         } else if (id == R.id.playlist) {
+            AppData.selectedNavigationDrawerItem = Constants.LAST_FM_TOP_TRACKS;
             mViewPager.setCurrentItem(0);
+            ft.replace(R.id.fragment_basic_first_item_of_view_pager, new PlaylistFragment());
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            ft.addToBackStack(null);
         } else if (id == R.id.play_track) {
             mViewPager.setCurrentItem(1);
+        } else if (id == R.id.local_tracks) {
+            AppData.selectedNavigationDrawerItem = Constants.USER_LOCAL_TRACKS;
+            mViewPager.setCurrentItem(0);
+            ft.replace(R.id.fragment_basic_first_item_of_view_pager, new LocalTracksFragment());
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            ft.addToBackStack(null);
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {

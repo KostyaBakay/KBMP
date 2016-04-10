@@ -14,6 +14,10 @@
             android:id="@+id/play_track"
             android:icon="@drawable/ic_menu_gallery"
             android:title="Play track" />
+        <item
+            android:id="@+id/local_tracks"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Local tracks" />
     </group>
 
     <item android:title="Communicate">

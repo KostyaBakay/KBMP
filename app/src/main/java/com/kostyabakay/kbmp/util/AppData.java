@@ -10,4 +10,5 @@ public class AppData {
     public static AudioPlayer audioPlayer = new AudioPlayer();
     public static boolean isSongPlayed;
     public static String songUrl;
+    public static int selectedNavigationDrawerItem = 0;
 }
