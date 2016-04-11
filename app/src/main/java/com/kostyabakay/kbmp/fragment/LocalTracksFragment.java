@@ -1,7 +1,6 @@
 package com.kostyabakay.kbmp.fragment;
 
 import android.database.Cursor;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -9,10 +8,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.kostyabakay.kbmp.R;
+import com.kostyabakay.kbmp.util.AppData;
+
+import java.io.IOException;
 
 /**
  * Created by Kostya on 10.04.2016.
@@ -20,8 +23,8 @@ import com.kostyabakay.kbmp.R;
  */
 public class LocalTracksFragment extends Fragment {
     private ListView mListView;
-    private MediaPlayer mMediaPlayer;
     private String[] mMusicList;
+    private String[] mAudioPath;
     private ArrayAdapter<String> mAdapter;
 
     public static LocalTracksFragment newInstance() {
@@ -41,9 +44,9 @@ public class LocalTracksFragment extends Fragment {
     public void onStart() {
         super.onStart();
         Log.d(LocalTracksFragment.class.getSimpleName(), "onStart");
-        mMediaPlayer = new MediaPlayer();
         setupUI();
         getLocalTracks();
+        listenUI();
     }
 
     /**
@@ -63,6 +66,26 @@ public class LocalTracksFragment extends Fragment {
     }
 
     /**
+     * This is listener for the user interface.
+     */
+    private void listenUI() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    playTrack(mAudioPath[position]);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    /**
      * Gets list of the user's local audio files.
      */
     private String[] getAudioList() {
@@ -73,18 +96,35 @@ public class LocalTracksFragment extends Fragment {
 
         int count = cursor.getCount();
         String[] songs = new String[count];
-        String[] audioPath = new String[count];
+        mAudioPath = new String[count];
         int i = 0;
 
         if (cursor.moveToFirst()) {
             do {
                 songs[i] = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME));
-                audioPath[i] = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+                mAudioPath[i] = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
                 i++;
             } while (cursor.moveToNext());
         }
 
         cursor.close();
         return songs;
+    }
+
+    /**
+     * Plays track from local path.
+     */
+    private void playTrack(String path) throws IllegalArgumentException, IllegalStateException, IOException {
+        Log.d(LocalTracksFragment.class.getSimpleName(), "playTrack: " + path);
+        AppData.songPath = path;
+        AppData.audioPlayer.play(getActivity(), AppData.songPath);
+        AppData.isSongPlayed = true;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(LocalTracksFragment.class.getSimpleName(), "onDestroy");
+        AppData.audioPlayer.stop();
     }
 }

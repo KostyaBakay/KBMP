@@ -2,6 +2,7 @@ package com.kostyabakay.kbmp.util;
 
 /**
  * Created by Kostya on 16.03.2016.
+ * This class represents constants of application.
  */
 public class Constants {
     public static final String LAST_FM_BASE_URL = "http://ws.audioscrobbler.com/2.0";

@@ -35,19 +35,19 @@ public class AudioPlayer {
     }
 
     /**
-     * Plays audio file from some URL.
+     * Plays audio file from some URL or local path.
      *
      * @param context
-     * @param url
+     * @param source
      */
-    public void play(Context context, String url) {
+    public void play(Context context, String source) {
         stop();
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
         try {
-            if (url != null) {
-                Uri songUri = Uri.parse(url);
+            if (source != null) {
+                Uri songUri = Uri.parse(source);
                 mMediaPlayer.setDataSource(context, songUri);
                 mMediaPlayer.prepare(); // Might take long! (for buffering, etc)
                 mMediaPlayer.start();
