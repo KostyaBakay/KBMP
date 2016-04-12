@@ -21,6 +21,7 @@ import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
 import com.kostyabakay.kbmp.network.asynctask.DownloadArtistImageAsyncTask;
 import com.kostyabakay.kbmp.network.asynctask.PlayTrackAsyncTask;
 import com.kostyabakay.kbmp.util.AppData;
+import com.kostyabakay.kbmp.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -206,7 +207,11 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
      * @return String with full song name.
      */
     private String createPreviousSongFullName() {
-        return mPreviousTrack.getArtist().getName() + " - " + mPreviousTrack.getName();
+        if (mPreviousTrack.getArtist() != null) {
+            return mPreviousTrack.getArtist().getName() + " - " + mPreviousTrack.getName();
+        } else {
+            return mPreviousTrack.getName();
+        }
     }
 
     /**
@@ -215,7 +220,11 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
      * @return String with full song name.
      */
     private String createNextSongFullName() {
-        return mNextTrack.getArtist().getName() + " - " + mNextTrack.getName();
+        if (mNextTrack.getArtist() != null) {
+            return mNextTrack.getArtist().getName() + " - " + mNextTrack.getName();
+        } else {
+            return mNextTrack.getName();
+        }
     }
 
     /**
@@ -281,8 +290,12 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
      * @param trackName
      */
     private void playSong(String trackName) {
-        PlayTrackAsyncTask playTrackAsyncTask = new PlayTrackAsyncTask(getActivity());
-        playTrackAsyncTask.execute(trackName);
+        if (AppData.playingTrackMode == Constants.NETWORK_PLAYING_TRACK_MODE) {
+            PlayTrackAsyncTask playTrackAsyncTask = new PlayTrackAsyncTask(getActivity());
+            playTrackAsyncTask.execute(trackName);
+        } else if (AppData.playingTrackMode == Constants.LOCAL_PLAYING_TRACK_MODE) {
+            AppData.audioPlayer.play(getActivity(), AppData.songPath);
+        }
     }
 
     /**
@@ -291,8 +304,12 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
     public void updatePlayTrackFragment() {
         mCurrentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrack();
         if (mCurrentTrack != null) {
-            mCurrentArtist = mCurrentTrack.getArtist();
-            mArtistNameTextView.setText(mCurrentTrack.getArtist().getName());
+
+            if (mCurrentTrack.getArtist() != null) {
+                mCurrentArtist = mCurrentTrack.getArtist();
+                mArtistNameTextView.setText(mCurrentTrack.getArtist().getName());
+            }
+
             mSongNameTextView.setText(mCurrentTrack.getName());
             mSongDurationTextView.setText(mCurrentTrack.getDuration());
             updateArtistImage();
@@ -310,12 +327,14 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
      * this image and update PlayTrackFragment with this artist image.
      */
     private void updateArtistImage() {
-        List<Image> images = mCurrentTrack.getImage();
-        Image image = images.get(images.size() - 1);
+        if (AppData.playingTrackMode == Constants.NETWORK_PLAYING_TRACK_MODE) {
+            List<Image> images = mCurrentTrack.getImage();
+            Image image = images.get(images.size() - 1);
 
-        new DownloadArtistImageAsyncTask((ImageView) getActivity()
-                .findViewById(R.id.artist_image_view_headset))
-                .execute(image.getText());
+            new DownloadArtistImageAsyncTask((ImageView) getActivity()
+                    .findViewById(R.id.artist_image_view_headset))
+                    .execute(image.getText());
+        }
     }
 
     /**

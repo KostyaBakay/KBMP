@@ -16,6 +16,7 @@ import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
 import com.kostyabakay.kbmp.network.asynctask.GetTopTracksAsyncTask;
 import com.kostyabakay.kbmp.network.asynctask.PlayTrackAsyncTask;
 import com.kostyabakay.kbmp.util.AppData;
+import com.kostyabakay.kbmp.util.Constants;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -52,6 +53,12 @@ public class PlaylistFragment extends Fragment {
         getTopTracks();
         setTopTracksToListView();
         listenUI();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mTracks = null;
     }
 
     /**
@@ -120,6 +127,7 @@ public class PlaylistFragment extends Fragment {
      * Plays track from vk.com using data from last.fm.
      */
     private void playTrack() {
+        AppData.playingTrackMode = Constants.NETWORK_PLAYING_TRACK_MODE;
         PlayTrackAsyncTask playTrackAsyncTask = new PlayTrackAsyncTask(getActivity());
         playTrackAsyncTask.execute(createCurrentSongFullName());
     }

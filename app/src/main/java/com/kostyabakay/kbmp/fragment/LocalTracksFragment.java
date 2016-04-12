@@ -9,23 +9,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.kostyabakay.kbmp.R;
+import com.kostyabakay.kbmp.activity.MainActivity;
+import com.kostyabakay.kbmp.adapter.PlaylistAdapter;
+import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
 import com.kostyabakay.kbmp.util.AppData;
+import com.kostyabakay.kbmp.util.Constants;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Kostya on 10.04.2016.
  * This class represents the list of the user's local audio files.
  */
 public class LocalTracksFragment extends Fragment {
+    private PlaylistAdapter mPlaylistAdapter;
     private ListView mListView;
+    private ArrayList<Track> mTracks = new ArrayList<>();
     private String[] mMusicList;
     private String[] mAudioPath;
-    private ArrayAdapter<String> mAdapter;
+    private Track mCurrentTrack;
+    private int mTrackPosition;
 
     public static LocalTracksFragment newInstance() {
         LocalTracksFragment fragment = new LocalTracksFragment();
@@ -49,6 +57,12 @@ public class LocalTracksFragment extends Fragment {
         listenUI();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        mTracks = null;
+    }
+
     /**
      * Initialization of view elements.
      */
@@ -60,9 +74,10 @@ public class LocalTracksFragment extends Fragment {
      * Gets the user's local music tracks.
      */
     private void getLocalTracks() {
-        mMusicList = getAudioList();
-        mAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, mMusicList);
-        mListView.setAdapter(mAdapter);
+        mTracks = getAudioList();
+        mPlaylistAdapter = new PlaylistAdapter(getActivity(), mTracks);
+        ((MainActivity) getActivity()).getViewPagerAdapter().setTracks(mTracks);//
+        mListView.setAdapter(mPlaylistAdapter);
     }
 
     /**
@@ -72,15 +87,11 @@ public class LocalTracksFragment extends Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    playTrack(mAudioPath[position]);
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                mTrackPosition = position; // Makes global information about item position
+                updateAudioPlayer();
+                setCurrentTrack();
+                play();
+                updateViewPager();
             }
         });
     }
@@ -88,27 +99,57 @@ public class LocalTracksFragment extends Fragment {
     /**
      * Gets list of the user's local audio files.
      */
-    private String[] getAudioList() {
+    private ArrayList<Track> getAudioList() {
         final Cursor cursor = getActivity().getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 new String[]{MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media.DATA},
                 null, null, "LOWER(" + MediaStore.Audio.Media.TITLE + ") ASC");
 
         int count = cursor.getCount();
-        String[] songs = new String[count];
+        Track[] songs = new Track[count];
         mAudioPath = new String[count];
         int i = 0;
 
         if (cursor.moveToFirst()) {
             do {
-                songs[i] = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME));
+                songs[i] = new Track();//
+                songs[i].setName(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)));
                 mAudioPath[i] = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
                 i++;
             } while (cursor.moveToNext());
         }
 
         cursor.close();
-        return songs;
+        ArrayList<Track> localTracks = new ArrayList<Track>(Arrays.asList(songs));
+
+        return localTracks;
+    }
+
+    /**
+     * Updates AudioPlayer data.
+     */
+    private void updateAudioPlayer() {
+        if (AppData.isSongPlayed) AppData.audioPlayer.stop();
+        AppData.isSongPlayed = true;
+    }
+
+    /**
+     * Sets current track using information about track position.
+     */
+    private void setCurrentTrack() {
+        mCurrentTrack = mPlaylistAdapter.getItem(mTrackPosition);
+    }
+
+    private void play() {
+        try {
+            playTrack(mAudioPath[mTrackPosition]);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -116,9 +157,19 @@ public class LocalTracksFragment extends Fragment {
      */
     private void playTrack(String path) throws IllegalArgumentException, IllegalStateException, IOException {
         Log.d(LocalTracksFragment.class.getSimpleName(), "playTrack: " + path);
+        AppData.playingTrackMode = Constants.LOCAL_PLAYING_TRACK_MODE;
         AppData.songPath = path;
         AppData.audioPlayer.play(getActivity(), AppData.songPath);
         AppData.isSongPlayed = true;
+    }
+
+    /**
+     * Updates ViewPager corresponding of the user action.
+     */
+    private void updateViewPager() {
+        ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrack(mCurrentTrack);
+        ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrackItemIndex(mTrackPosition);
+        ((MainActivity) getActivity()).getViewPager().setCurrentItem(1);
     }
 
     @Override

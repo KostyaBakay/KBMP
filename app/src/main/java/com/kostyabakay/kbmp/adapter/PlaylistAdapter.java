@@ -52,9 +52,20 @@ public class PlaylistAdapter extends ArrayAdapter<Track> {
         TextView artistName = (TextView) view.findViewById(R.id.playlist_artist_name);
         TextView songName = (TextView) view.findViewById(R.id.playlist_song_name);
         Track track = mTracks.get(position);
-        Artist artist = track.getArtist();
-        songId.setText(track.getMbid());
-        artistName.setText(artist.getName());
+        Artist artist = null;
+
+        if (track.getArtist() != null) {
+            artist = track.getArtist();
+        }
+
+        if (track.getMbid() != null) {
+            songId.setText(track.getMbid());
+        }
+
+        if (artist != null) {
+            artistName.setText(artist.getName());
+        }
+
         songName.setText(track.getName());
         return view;
     }
