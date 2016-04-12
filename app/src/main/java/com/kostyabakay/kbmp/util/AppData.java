@@ -9,7 +9,9 @@ import com.kostyabakay.kbmp.audio.AudioPlayer;
 public class AppData {
     public static AudioPlayer audioPlayer = new AudioPlayer();
     public static boolean isSongPlayed;
-    public static String songPath;
+    public static String previousSongPath;
+    public static String currentSongPath;
+    public static String nextSongPath;
     public static String songUrl;
     public static int selectedNavigationDrawerItem = 0;
     public static int playingTrackMode = 0;

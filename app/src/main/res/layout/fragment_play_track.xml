@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/artist_image_view_headset"
+        android:id="@+id/artist_image_view"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_gravity="center_vertical|center_horizontal"

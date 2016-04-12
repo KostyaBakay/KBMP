@@ -40,7 +40,7 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
     private Track mPreviousTrack, mCurrentTrack, mNextTrack;
     private Artist mCurrentArtist;
     private SeekBar mTimelineSeekBar;
-    private ImageView mSkipPreviousSongImageView, mPlaySongImageView, mSkipNextSongImageView;
+    private ImageView mSkipPreviousSongImageView, mPlaySongImageView, mSkipNextSongImageView, mArtistImageView;
     private int mCurrentTrackPosition, mTotalDuration;
 
     public static PlayTrackFragment newInstance() {
@@ -96,6 +96,7 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
      * Initialization of the ImageView views.
      */
     private void setupImageView() {
+        mArtistImageView = (ImageView) getActivity().findViewById(R.id.artist_image_view);
         mSkipPreviousSongImageView = (ImageView) getActivity().findViewById(R.id.skip_previous_song_image_button);
         mPlaySongImageView = (ImageView) getActivity().findViewById(R.id.play_song_image_button);
         mSkipNextSongImageView = (ImageView) getActivity().findViewById(R.id.skip_next_song_image_button);
@@ -139,6 +140,8 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
                     getCurrentTrack();
                     changePreviousTrackToCurrent();
                     updateViewPagerAdapter(mPreviousTrack, mCurrentTrackPosition);
+                    updateArtistImage(mPreviousTrack);
+                    AppData.currentSongPath = AppData.previousSongPath;
                     playSong(createPreviousSongFullName());
                     updatePlayTrackFragment();
                 } else {
@@ -183,6 +186,8 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
                     getCurrentTrack();
                     changeNextTrackToCurrent();
                     updateViewPagerAdapter(mNextTrack, mCurrentTrackPosition);
+                    updateArtistImage(mNextTrack);
+                    AppData.currentSongPath = AppData.nextSongPath;
                     playSong(createNextSongFullName());
                     updatePlayTrackFragment();
                 } else {
@@ -294,7 +299,7 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
             PlayTrackAsyncTask playTrackAsyncTask = new PlayTrackAsyncTask(getActivity());
             playTrackAsyncTask.execute(trackName);
         } else if (AppData.playingTrackMode == Constants.LOCAL_PLAYING_TRACK_MODE) {
-            AppData.audioPlayer.play(getActivity(), AppData.songPath);
+            AppData.audioPlayer.play(getActivity(), AppData.currentSongPath);
         }
     }
 
@@ -302,6 +307,7 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
      * Updates PlayTrackFragment with information about current track.
      */
     public void updatePlayTrackFragment() {
+        if (AppData.playingTrackMode == Constants.LOCAL_PLAYING_TRACK_MODE) clearPlayTrackFragment();
         mCurrentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrack();
         if (mCurrentTrack != null) {
 
@@ -312,9 +318,19 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
 
             mSongNameTextView.setText(mCurrentTrack.getName());
             mSongDurationTextView.setText(mCurrentTrack.getDuration());
-            updateArtistImage();
+            updateArtistImage(mCurrentTrack); // TODO: Fix double call method
             updatePlayButton();
         }
+    }
+
+    /**
+     * Clears PlayTrackFragment.
+     */
+    public void clearPlayTrackFragment() {
+        mArtistImageView.setImageResource(R.drawable.last_fm_logo_circle);
+        mArtistNameTextView.setText("");
+        mSongNameTextView.setText("");
+        mSongDurationTextView.setText("");
     }
 
     /**
@@ -326,13 +342,13 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
      * Later we pass URL of the best quality image to AsyncTask and this AsyncTask will download
      * this image and update PlayTrackFragment with this artist image.
      */
-    private void updateArtistImage() {
+    private void updateArtistImage(Track track) {
         if (AppData.playingTrackMode == Constants.NETWORK_PLAYING_TRACK_MODE) {
-            List<Image> images = mCurrentTrack.getImage();
+            List<Image> images = track.getImage();
             Image image = images.get(images.size() - 1);
 
             new DownloadArtistImageAsyncTask((ImageView) getActivity()
-                    .findViewById(R.id.artist_image_view_headset))
+                    .findViewById(R.id.artist_image_view))
                     .execute(image.getText());
         }
     }

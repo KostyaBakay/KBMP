@@ -142,6 +142,8 @@ public class LocalTracksFragment extends Fragment {
 
     private void play() {
         try {
+            AppData.previousSongPath = mAudioPath[mTrackPosition - 1];
+            AppData.nextSongPath = mAudioPath[mTrackPosition + 1];
             playTrack(mAudioPath[mTrackPosition]);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -158,8 +160,8 @@ public class LocalTracksFragment extends Fragment {
     private void playTrack(String path) throws IllegalArgumentException, IllegalStateException, IOException {
         Log.d(LocalTracksFragment.class.getSimpleName(), "playTrack: " + path);
         AppData.playingTrackMode = Constants.LOCAL_PLAYING_TRACK_MODE;
-        AppData.songPath = path;
-        AppData.audioPlayer.play(getActivity(), AppData.songPath);
+        AppData.currentSongPath = path;
+        AppData.audioPlayer.play(getActivity(), AppData.currentSongPath);
         AppData.isSongPlayed = true;
     }
 
