@@ -19,7 +19,6 @@ import com.kostyabakay.kbmp.util.AppData;
 import com.kostyabakay.kbmp.util.Constants;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Kostya on 10.03.2016.
@@ -50,15 +49,15 @@ public class PlaylistFragment extends Fragment {
         super.onStart();
         Log.d(PlaylistFragment.class.getSimpleName(), "onStart");
         setupUI();
-        getTopTracks();
         setTopTracksToListView();
+        getTopTracks();
         listenUI();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mTracks = null;
+        mTracks.clear();
     }
 
     /**
@@ -72,15 +71,8 @@ public class PlaylistFragment extends Fragment {
      * Gets top tracks from last.fm with chart.getTopTracks API method.
      */
     private void getTopTracks() {
-        try {
-            GetTopTracksAsyncTask getTopTracksAsyncTask = new GetTopTracksAsyncTask(getActivity());
-            getTopTracksAsyncTask.execute().get();
-            mTracks = getTopTracksAsyncTask.getTopTracks();
-        } catch (InterruptedException e) {
-            Log.e(PlaylistFragment.class.getSimpleName(), "InterruptedException");
-        } catch (ExecutionException e) {
-            Log.e(PlaylistFragment.class.getSimpleName(), "ExecutionException");
-        }
+        GetTopTracksAsyncTask getTopTracksAsyncTask = new GetTopTracksAsyncTask(getActivity(), mTracks, mPlaylistAdapter);
+        getTopTracksAsyncTask.execute();
     }
 
     /**

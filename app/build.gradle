@@ -26,5 +26,5 @@ dependencies {
     compile 'com.android.support:design:23.2.0'
     compile 'com.squareup.retrofit:retrofit:1.8.0'
     compile 'com.google.code.gson:gson:2.4'
-    compile 'com.vk:androidsdk:+'
+    compile 'com.vk:androidsdk:1.6.7'
 }

@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onPageSelected(int position) {
                 mViewPagerAdapter.updateViewPagerAdapter(position);
-                setViewPager(mViewPager);
             }
 
             @Override
@@ -213,10 +212,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public ViewPager getViewPager() {
         Log.d(MainActivity.class.getSimpleName(), "getViewPager");
         return mViewPager;
-    }
-
-    public void setViewPager(ViewPager viewPager) {
-        this.mViewPager = viewPager;
     }
 
     private void startVkComponents() {

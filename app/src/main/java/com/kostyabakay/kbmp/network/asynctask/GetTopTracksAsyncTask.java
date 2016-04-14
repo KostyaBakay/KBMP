@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
+import com.kostyabakay.kbmp.adapter.PlaylistAdapter;
 import com.kostyabakay.kbmp.util.Constants;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Attr;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
@@ -24,10 +25,13 @@ import retrofit.RetrofitError;
 public class GetTopTracksAsyncTask extends AsyncTask<Void, Void, ArrayList<Track>> {
     private Activity mActivity;
     private ProgressDialog mProgressDialog;
+    private PlaylistAdapter mPlaylistAdapter;
     public ArrayList<Track> mTracks;
 
-    public GetTopTracksAsyncTask(Activity activity) {
+    public GetTopTracksAsyncTask(Activity activity, ArrayList<Track> list, PlaylistAdapter adapter) {
         this.mActivity = activity;
+        this.mTracks = list;
+        this.mPlaylistAdapter = adapter;
     }
 
     @Override
@@ -47,7 +51,6 @@ public class GetTopTracksAsyncTask extends AsyncTask<Void, Void, ArrayList<Track
                 .build();
 
         LastFmService lastFmApi = restAdapter.create(LastFmService.class);
-        mTracks = new ArrayList<>();
 
         try {
             TracksResponse response = lastFmApi.getTopTracks();
@@ -82,10 +85,6 @@ public class GetTopTracksAsyncTask extends AsyncTask<Void, Void, ArrayList<Track
     protected void onPostExecute(ArrayList<Track> tracks) {
         super.onPostExecute(tracks);
         mProgressDialog.dismiss();
-        getTopTracks();
-    }
-
-    public ArrayList<Track> getTopTracks() {
-        return mTracks;
+        mPlaylistAdapter.notifyDataSetChanged();
     }
 }

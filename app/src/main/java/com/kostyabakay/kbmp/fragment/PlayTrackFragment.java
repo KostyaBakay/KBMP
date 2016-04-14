@@ -93,7 +93,7 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
             @Override
             public void onPageSelected(int position) {
                 if (position == 1) {
-                    Toast.makeText(getActivity(), "PlayTrackFragment", Toast.LENGTH_SHORT).show();
+                    Log.d(PlayTrackFragment.class.getSimpleName(), "onPageSelected");
 
                     // TODO: Fix bug. Last.fm tracks work only if user started local track, paused and started last.fm track.
                     AppData.audioPlayer.getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
