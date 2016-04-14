@@ -15,7 +15,7 @@ import java.io.IOException;
  * This class works with audio.
  */
 public class AudioPlayer {
-    private MediaPlayer mMediaPlayer;
+    private MediaPlayer mMediaPlayer = new MediaPlayer();
 
     /**
      * Plays local audio file.
@@ -42,7 +42,7 @@ public class AudioPlayer {
      */
     public void play(Context context, String source) {
         stop();
-        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer = getMediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
         try {
@@ -90,6 +90,10 @@ public class AudioPlayer {
     }
 
     public MediaPlayer getMediaPlayer() {
+        if (mMediaPlayer == null) {
+            mMediaPlayer = new MediaPlayer();
+        }
+
         return mMediaPlayer;
     }
 }

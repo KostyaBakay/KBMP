@@ -60,7 +60,7 @@ public class LocalTracksFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mTracks = null;
+        mTracks.clear();
     }
 
     /**
@@ -76,7 +76,7 @@ public class LocalTracksFragment extends Fragment {
     private void getLocalTracks() {
         mTracks = getAudioList();
         mPlaylistAdapter = new PlaylistAdapter(getActivity(), mTracks);
-        ((MainActivity) getActivity()).getViewPagerAdapter().setTracks(mTracks);//
+        ((MainActivity) getActivity()).getViewPagerAdapter().setTracks(mTracks);
         mListView.setAdapter(mPlaylistAdapter);
     }
 
@@ -112,7 +112,7 @@ public class LocalTracksFragment extends Fragment {
 
         if (cursor.moveToFirst()) {
             do {
-                songs[i] = new Track();//
+                songs[i] = new Track();
                 songs[i].setName(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)));
                 mAudioPath[i] = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
                 i++;

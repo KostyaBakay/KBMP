@@ -7,6 +7,7 @@ import com.kostyabakay.kbmp.audio.AudioPlayer;
  * This class represents some important application data.
  */
 public class AppData {
+    private static AppData mAppData = new AppData();
     public static AudioPlayer audioPlayer = new AudioPlayer();
     public static boolean isSongPlayed;
     public static String previousSongPath;
@@ -15,4 +16,12 @@ public class AppData {
     public static String songUrl;
     public static int selectedNavigationDrawerItem = 0;
     public static int playingTrackMode = 0;
+
+    public static AppData getInstance() {
+        return mAppData;
+    }
+
+    public AppData() {
+        mAppData = this;
+    }
 }
