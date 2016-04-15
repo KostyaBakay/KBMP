@@ -105,7 +105,6 @@ public class PlaylistFragment extends Fragment {
      */
     private void updateAudioPlayer() {
         if (AppData.isSongPlayed) AppData.audioPlayer.stop();
-        AppData.isSongPlayed = true;
     }
 
     /**
@@ -122,6 +121,7 @@ public class PlaylistFragment extends Fragment {
         AppData.playingTrackMode = Constants.NETWORK_PLAYING_TRACK_MODE;
         PlayTrackAsyncTask playTrackAsyncTask = new PlayTrackAsyncTask(getActivity());
         playTrackAsyncTask.execute(createCurrentSongFullName());
+        AppData.isSongPlayed = true;
     }
 
     /**

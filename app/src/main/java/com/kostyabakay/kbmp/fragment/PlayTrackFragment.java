@@ -31,7 +31,7 @@ import java.util.List;
  * Created by Kostya on 10.03.2016.
  * This class represents the view for playing music track.
  */
-public class PlayTrackFragment extends Fragment implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChangeListener {
     private final int FIRST_SONG_INDEX = 0;
     private final int LAST_SONG_INDEX = 49;
     private MediaPlayer mMediaPlayer;
@@ -71,7 +71,7 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         setupSeekBar();
         setupTextView();
         setupImageView();
-        listenSeekBar();
+        listenViewPagerChanges();
         listenImageViewButtons();
     }
 
@@ -83,7 +83,7 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         mTimelineSeekBar.setOnSeekBarChangeListener(this);
     }
 
-    private void listenSeekBar() {
+    private void listenViewPagerChanges() {
         ((MainActivity) getActivity()).getViewPager().setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -94,22 +94,24 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
             public void onPageSelected(int position) {
                 if (position == 1) {
                     Log.d(PlayTrackFragment.class.getSimpleName(), "onPageSelected");
-
-                    // TODO: Fix bug. Last.fm tracks work only if user started local track, paused and started last.fm track.
-                    AppData.audioPlayer.getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        public void onPrepared(MediaPlayer mp) {
-                            mTotalDuration = mp.getDuration();
-                            mTimelineSeekBar.setMax(mTotalDuration);
-                            mHandler.postDelayed(runnable, 100);
-                        }
-                    });
-
+                    updatePlayTrackFragment();
+                    listenSeekBar();
                 }
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
 
+            }
+        });
+    }
+
+    private void listenSeekBar() {
+        AppData.audioPlayer.getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            public void onPrepared(MediaPlayer mp) {
+                mTotalDuration = mp.getDuration();
+                mTimelineSeekBar.setMax(mTotalDuration);
+                mHandler.postDelayed(runnable, 100);
             }
         });
     }
@@ -132,8 +134,6 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         mSkipPreviousSongImageView = (ImageView) getActivity().findViewById(R.id.skip_previous_song_image_button);
         mPlaySongImageView = (ImageView) getActivity().findViewById(R.id.play_song_image_button);
         mSkipNextSongImageView = (ImageView) getActivity().findViewById(R.id.skip_next_song_image_button);
-        mSkipPreviousSongImageView.setOnClickListener(this);
-        mSkipNextSongImageView.setOnClickListener(this);
     }
 
     /**
@@ -290,21 +290,6 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
         AppData.audioPlayer.stop();
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.skip_previous_song_image_button:
-                Toast.makeText(getActivity(), "Back", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.play_song_image_button:
-                Toast.makeText(getActivity(), "Play", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.skip_next_song_image_button:
-                Toast.makeText(getActivity(), "Next", Toast.LENGTH_SHORT).show();
-                break;
-        }
-    }
-
     /**
      * Plays song from vk.com with corresponding name.
      *
@@ -398,7 +383,6 @@ public class PlayTrackFragment extends Fragment implements View.OnClickListener,
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         mSongCurrentTimeTextView.setText(String.valueOf(progress / 1000));
 
-        // TODO: Fix bug. Last.fm tracks work only if user started local track, paused and started last.fm track.
         if (fromUser) {
             AppData.audioPlayer.getMediaPlayer().seekTo(progress);
         }
