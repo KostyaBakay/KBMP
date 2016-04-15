@@ -175,25 +175,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
-        if (id == R.id.vk_authorization) {
+        if (id == R.id.nav_vk_authorization) {
             ft.replace(R.id.container, mVkAuthorizationFragment);
-        } else if (id == R.id.playlist) {
+        } else if (id == R.id.nav_last_fm_top_tracks) {
             AppData.selectedNavigationDrawerItem = Constants.LAST_FM_TOP_TRACKS;
             mViewPager.setCurrentItem(0);
             ft.replace(R.id.fragment_basic_first_item_of_view_pager, new PlaylistFragment());
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             ft.addToBackStack(null);
-        } else if (id == R.id.play_track) {
-            mViewPager.setCurrentItem(1);
-        } else if (id == R.id.local_tracks) {
+        } else if (id == R.id.nav_local_tracks) {
             AppData.selectedNavigationDrawerItem = Constants.USER_LOCAL_TRACKS;
             mViewPager.setCurrentItem(0);
             ft.replace(R.id.fragment_basic_first_item_of_view_pager, new LocalTracksFragment());
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             ft.addToBackStack(null);
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_developer) {
 
         }
 

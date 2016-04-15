@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">KBMP</string>
+    <string name="app_name_full">Kostya Bakay Media Player</string>
+    <string name="developer_email">kostya.bakay@gmail.com</string>
     <integer name="com_vk_sdk_AppId">5366456</integer>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

@@ -176,11 +176,11 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
             public void onClick(View v) {
                 if (AppData.audioPlayer.getMediaPlayer() != null) {
                     if (!AppData.isSongPlayed) {
-                        mPlaySongImageView.setImageResource(R.mipmap.ic_pause_light);
+                        mPlaySongImageView.setImageResource(R.mipmap.ic_pause);
                         AppData.audioPlayer.resume();
                         AppData.isSongPlayed = true;
                     } else {
-                        mPlaySongImageView.setImageResource(R.mipmap.ic_play_light);
+                        mPlaySongImageView.setImageResource(R.mipmap.ic_play);
                         AppData.audioPlayer.pause();
                         AppData.isSongPlayed = false;
                     }
@@ -362,9 +362,9 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
      */
     private void updatePlayButton() {
         if (AppData.isSongPlayed) {
-            mPlaySongImageView.setImageResource(R.mipmap.ic_pause_light);
+            mPlaySongImageView.setImageResource(R.mipmap.ic_pause);
         } else {
-            mPlaySongImageView.setImageResource(R.mipmap.ic_play_light);
+            mPlaySongImageView.setImageResource(R.mipmap.ic_play);
         }
     }
 

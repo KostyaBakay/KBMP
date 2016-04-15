@@ -3,33 +3,25 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/vk_authorization"
+            android:id="@+id/nav_vk_authorization"
             android:icon="@mipmap/ic_vk"
-            android:title="vk.com log in" />
+            android:title="Log in" />
         <item
-            android:id="@+id/playlist"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Playlist" />
+            android:id="@+id/nav_last_fm_top_tracks"
+            android:icon="@mipmap/ic_lastfm"
+            android:title="Top tracks" />
         <item
-            android:id="@+id/play_track"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Play track" />
-        <item
-            android:id="@+id/local_tracks"
-            android:icon="@drawable/ic_menu_gallery"
+            android:id="@+id/nav_local_tracks"
+            android:icon="@mipmap/ic_file_music"
             android:title="Local tracks" />
     </group>
 
     <item android:title="Communicate">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_developer"
+                android:icon="@mipmap/ic_linkedin"
+                android:title="Developer" />
         </menu>
     </item>
 

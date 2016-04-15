@@ -71,7 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:clickable="true"
-            android:src="@mipmap/ic_skip_previous_light" />
+            android:src="@mipmap/ic_skip_previous" />
 
         <ImageView
             android:id="@+id/play_song_image_button"
@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:clickable="true"
-            android:src="@mipmap/ic_play_light" />
+            android:src="@mipmap/ic_play" />
 
         <ImageView
             android:id="@+id/skip_next_song_image_button"
@@ -87,6 +87,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:clickable="true"
-            android:src="@mipmap/ic_skip_next_light" />
+            android:src="@mipmap/ic_skip_next" />
     </LinearLayout>
 </LinearLayout>
