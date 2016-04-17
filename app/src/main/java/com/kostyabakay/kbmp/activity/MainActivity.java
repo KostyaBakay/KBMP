@@ -1,6 +1,8 @@
 package com.kostyabakay.kbmp.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -14,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.adapter.ViewPagerAdapter;
@@ -128,10 +131,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * show fragment for authorization.
      */
     private void checkUserLogIn() {
-        if (!VKSdk.isLoggedIn()) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.container, mVkAuthorizationFragment);
-            ft.commit();
+        if (isNetworkConnected()) {
+            if (!VKSdk.isLoggedIn()) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.container, mVkAuthorizationFragment);
+                ft.commit();
+            }
+        } else {
+            Toast.makeText(this, R.string.check_internet_connection, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -180,13 +187,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
         if (id == R.id.nav_vk_authorization) {
-            ft.replace(R.id.container, mVkAuthorizationFragment);
+            if (isNetworkConnected()) {
+                ft.replace(R.id.container, mVkAuthorizationFragment);
+            } else {
+                Toast.makeText(this, R.string.check_internet_connection, Toast.LENGTH_LONG).show();
+            }
         } else if (id == R.id.nav_last_fm_top_tracks) {
-            AppData.selectedNavigationDrawerItem = Constants.LAST_FM_TOP_TRACKS;
-            mViewPager.setCurrentItem(0);
-            ft.replace(R.id.fragment_basic_first_item_of_view_pager, new PlaylistFragment());
-            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            ft.addToBackStack(null);
+            if (isNetworkConnected()) {
+                AppData.selectedNavigationDrawerItem = Constants.LAST_FM_TOP_TRACKS;
+                mViewPager.setCurrentItem(0);
+                ft.replace(R.id.fragment_basic_first_item_of_view_pager, new PlaylistFragment());
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.addToBackStack(null);
+            } else {
+                Toast.makeText(this, R.string.check_internet_connection, Toast.LENGTH_LONG).show();
+            }
         } else if (id == R.id.nav_local_tracks) {
             AppData.selectedNavigationDrawerItem = Constants.USER_LOCAL_TRACKS;
             mViewPager.setCurrentItem(0);
@@ -214,6 +229,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return mViewPager;
     }
 
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
+    }
+
     private void startVkComponents() {
         getFingerPrints();
         mVkAuthorizationFragment = new VkAuthorizationFragment();
@@ -225,10 +245,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showLinkedInAccount() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.addCategory(Intent.CATEGORY_BROWSABLE);
-        intent.setData(Uri.parse(LINKED_IN_URL));
-        startActivity(intent);
+        if (isNetworkConnected()) {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+            intent.setData(Uri.parse(LINKED_IN_URL));
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, R.string.check_internet_connection, Toast.LENGTH_LONG).show();
+        }
     }
 }
