@@ -130,7 +130,7 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
      * Initialization of the ImageView views.
      */
     private void setupImageView() {
-        mArtistImageView = (ImageView) getActivity().findViewById(R.id.artist_image_view);
+        mArtistImageView = (ImageView) getActivity().findViewById(R.id.play_track_artist_image_view);
         mSkipPreviousSongImageView = (ImageView) getActivity().findViewById(R.id.skip_previous_song_image_button);
         mPlaySongImageView = (ImageView) getActivity().findViewById(R.id.play_song_image_button);
         mSkipNextSongImageView = (ImageView) getActivity().findViewById(R.id.skip_next_song_image_button);
@@ -331,10 +331,11 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
      * Clears PlayTrackFragment.
      */
     public void clearPlayTrackFragment() {
-        mArtistImageView.setImageResource(R.drawable.last_fm_logo_circle);
+        mArtistImageView.setImageResource(R.drawable.last_fm_logo);
         mArtistNameTextView.setText("");
         mSongNameTextView.setText("");
-        mSongDurationTextView.setText("");
+        mSongCurrentTimeTextView.setText(R.string.zero_time);
+        mSongDurationTextView.setText(R.string.zero_time);
     }
 
     /**
@@ -352,7 +353,7 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
             Image image = images.get(images.size() - 1);
 
             new DownloadArtistImageAsyncTask((ImageView) getActivity()
-                    .findViewById(R.id.artist_image_view))
+                    .findViewById(R.id.play_track_artist_image_view))
                     .execute(image.getText());
         }
     }

@@ -4,6 +4,10 @@
     <string name="developer_email">kostya.bakay@gmail.com</string>
     <integer name="com_vk_sdk_AppId">5366456</integer>
 
+    <string name="artist_name">Artist name</string>
+    <string name="song_name">Song name</string>
+    <string name="zero_time">0:00</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

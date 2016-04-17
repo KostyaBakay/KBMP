@@ -1,92 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fragment_play_track"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/artist_image_view"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:id="@+id/play_track_artist_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/timeline_seekbar"
+        android:layout_alignParentRight="true"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:src="@drawable/last_fm_logo_circle" />
+        android:baselineAlignBottom="false"
+        android:scaleType="centerCrop"
+        android:src="@drawable/last_fm_logo" />
 
     <TextView
         android:id="@+id/play_track_artist_name_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/play_track_song_name_text_view"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:text="Artist name"
-        android:textSize="16sp"
+        android:gravity="center"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="16dp"
+        android:text="@string/artist_name"
+        android:textColor="@color/primary_light"
+        android:textSize="24sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/play_track_song_name_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/play_track_artist_image_view"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:text="Song name"
-        android:textSize="14sp"
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:text="@string/song_name"
+        android:textColor="@color/primary_light"
+        android:textSize="24sp"
         android:textStyle="bold" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/play_track_song_current_time_text_view"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/play_track_song_duration_text_view"
+        android:gravity="center"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp">
+        android:paddingRight="16dp"
+        android:text="@string/zero_time"
+        android:textColor="@color/primary_light"
+        android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/play_track_song_current_time_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0" />
-
-        <TextView
-            android:id="@+id/play_track_song_duration_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:text="Song duration"
-            android:textSize="12sp" />
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/play_track_song_duration_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/timeline_seekbar"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="@string/zero_time"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
 
     <SeekBar
         android:id="@+id/timeline_seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/linear_layout_song_icons"
+        android:layout_alignEnd="@+id/play_track_song_duration_text_view"
+        android:layout_alignRight="@+id/play_track_song_duration_text_view"
         android:max="100" />
 
     <LinearLayout
+        android:id="@+id/linear_layout_song_icons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal">
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="false"
+        android:gravity="center">
 
         <ImageView
             android:id="@+id/skip_previous_song_image_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="1"
             android:clickable="true"
+            android:padding="14dp"
             android:src="@mipmap/ic_skip_previous" />
 
         <ImageView
             android:id="@+id/play_song_image_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="1"
             android:clickable="true"
+            android:padding="14dp"
             android:src="@mipmap/ic_play" />
 
         <ImageView
             android:id="@+id/skip_next_song_image_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="1"
             android:clickable="true"
+            android:padding="14dp"
             android:src="@mipmap/ic_skip_next" />
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>
