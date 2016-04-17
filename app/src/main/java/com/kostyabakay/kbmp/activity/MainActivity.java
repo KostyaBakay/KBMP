@@ -1,5 +1,7 @@
 package com.kostyabakay.kbmp.activity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -31,6 +33,8 @@ import java.util.Arrays;
  * This class represents the main Activity for application.
  */
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String LINKED_IN_URL = "https://ua.linkedin.com/in/kostyabakay";
+
     private Toolbar mToolbar;
     private ViewPager mViewPager;
     private ViewPagerAdapter mViewPagerAdapter;
@@ -190,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             ft.addToBackStack(null);
         } else if (id == R.id.nav_developer) {
-
+            showLinkedInAccount();
         }
 
         ft.commit();
@@ -218,5 +222,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void getFingerPrints() {
         String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
         System.out.println("Fingerprints: " + Arrays.asList(fingerprints));
+    }
+
+    private void showLinkedInAccount() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+        intent.setData(Uri.parse(LINKED_IN_URL));
+        startActivity(intent);
     }
 }
