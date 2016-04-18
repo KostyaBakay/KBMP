@@ -31,7 +31,7 @@ public class BasicFirstItemViewPagerFragment extends Fragment {
 
         if (AppData.selectedNavigationDrawerItem == 0) {
             // When this container fragment is created, we fill it with our first "real" fragment
-            ft.replace(R.id.fragment_basic_first_item_of_view_pager, new PlaylistFragment());
+            ft.replace(R.id.fragment_basic_first_item_of_view_pager, new StartingFragment());
             ft.commit();
         }
 

@@ -4,6 +4,9 @@
     <string name="developer_email">kostya.bakay@gmail.com</string>
     <integer name="com_vk_sdk_AppId">5366456</integer>
 
+    <string name="starting_fragment_message">This is online audio player. You can listen your local
+        music, but if you want to listen online music you should log in to your vk.com account.</string>
+
     <string name="artist_name">Artist name</string>
     <string name="song_name">Song name</string>
     <string name="zero_time">0:00</string>
@@ -11,6 +14,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="check_internet_connection">Please check your Internet connection!</string>
+    <string name="please_log_in_to_vk">Please log in to vk.com!</string>
+    <string name="please_check_internet_connection">Please check your Internet connection!</string>
     <string name="action_settings">Settings</string>
 </resources>

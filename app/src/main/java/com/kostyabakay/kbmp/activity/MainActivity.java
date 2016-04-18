@@ -26,7 +26,6 @@ import com.kostyabakay.kbmp.fragment.VkAuthorizationFragment;
 import com.kostyabakay.kbmp.network.asynctask.GetJournalAsyncTask;
 import com.kostyabakay.kbmp.util.AppData;
 import com.kostyabakay.kbmp.util.Constants;
-import com.vk.sdk.VKSdk;
 import com.vk.sdk.util.VKUtil;
 
 import java.util.Arrays;
@@ -50,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setupUI();
         startVkComponents();
         listenViewPager();
-        checkUserLogIn();
 
         // This lines enable simple retrofit example
         GetJournalAsyncTask getJournalAsyncTask = new GetJournalAsyncTask();
@@ -126,22 +124,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-    /**
-     * Checks if user logged in application using vk.com account. If user didn't logged in app will
-     * show fragment for authorization.
-     */
-    private void checkUserLogIn() {
-        if (isNetworkConnected()) {
-            if (!VKSdk.isLoggedIn()) {
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.container, mVkAuthorizationFragment);
-                ft.commit();
-            }
-        } else {
-            Toast.makeText(this, R.string.check_internet_connection, Toast.LENGTH_LONG).show();
-        }
-    }
-
     @Override
     public void onBackPressed() {
         Log.d(MainActivity.class.getSimpleName(), "onBackPressed");
@@ -190,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (isNetworkConnected()) {
                 ft.replace(R.id.container, mVkAuthorizationFragment);
             } else {
-                Toast.makeText(this, R.string.check_internet_connection, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.please_check_internet_connection, Toast.LENGTH_LONG).show();
             }
         } else if (id == R.id.nav_last_fm_top_tracks) {
             if (isNetworkConnected()) {
@@ -200,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 ft.addToBackStack(null);
             } else {
-                Toast.makeText(this, R.string.check_internet_connection, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.please_check_internet_connection, Toast.LENGTH_LONG).show();
             }
         } else if (id == R.id.nav_local_tracks) {
             AppData.selectedNavigationDrawerItem = Constants.USER_LOCAL_TRACKS;
@@ -229,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return mViewPager;
     }
 
-    private boolean isNetworkConnected() {
+    public boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
     }
@@ -252,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             intent.setData(Uri.parse(LINKED_IN_URL));
             startActivity(intent);
         } else {
-            Toast.makeText(this, R.string.check_internet_connection, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.please_check_internet_connection, Toast.LENGTH_LONG).show();
         }
     }
 }

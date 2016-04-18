@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.activity.MainActivity;
@@ -17,6 +18,7 @@ import com.kostyabakay.kbmp.network.asynctask.GetTopTracksAsyncTask;
 import com.kostyabakay.kbmp.network.asynctask.PlayTrackAsyncTask;
 import com.kostyabakay.kbmp.util.AppData;
 import com.kostyabakay.kbmp.util.Constants;
+import com.vk.sdk.VKSdk;
 
 import java.util.ArrayList;
 
@@ -41,17 +43,33 @@ public class PlaylistFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(PlaylistFragment.class.getSimpleName(), "onCreateView");
-        return inflater.inflate(R.layout.fragment_playlist, container, false);
+        View view = inflater.inflate(R.layout.fragment_playlist, container, false);
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity.isNetworkConnected()) {
+            if (!VKSdk.isLoggedIn()) {
+                Toast.makeText(getActivity(), R.string.please_log_in_to_vk, Toast.LENGTH_SHORT).show();
+                return inflater.inflate(R.layout.fragment_starting, container, false);
+            } else {
+                return view;
+            }
+        } else {
+            Toast.makeText(getActivity(), R.string.please_check_internet_connection, Toast.LENGTH_LONG).show();
+            return inflater.inflate(R.layout.fragment_starting, container, false);
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
         Log.d(PlaylistFragment.class.getSimpleName(), "onStart");
-        setupUI();
-        setTopTracksToListView();
-        getTopTracks();
-        listenUI();
+        if (VKSdk.isLoggedIn()) {
+            setupUI();
+            setTopTracksToListView();
+            getTopTracks();
+            listenUI();
+        } else {
+            Toast.makeText(getActivity(), R.string.please_log_in_to_vk, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
