@@ -24,12 +24,15 @@ public class BasicFirstItemViewPagerFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_basic_first_item_of_view_pager, container, false);
+        View view = inflater.inflate(R.layout.fragment_basic_first_item_of_view_pager,
+                container, false);
+
         FragmentTransaction ft = getFragmentManager().beginTransaction();
 
-        if (AppData.selectedNavigationDrawerItem == 0) {
+        if (AppData.sSelectedNavigationDrawerItem == 0) {
             // When this container fragment is created, we fill it with our first "real" fragment
             ft.replace(R.id.fragment_basic_first_item_of_view_pager, new StartingFragment());
             ft.commit();

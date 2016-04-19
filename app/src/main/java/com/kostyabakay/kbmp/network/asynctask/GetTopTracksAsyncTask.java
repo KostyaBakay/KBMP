@@ -28,7 +28,8 @@ public class GetTopTracksAsyncTask extends AsyncTask<Void, Void, ArrayList<Track
     private PlaylistAdapter mPlaylistAdapter;
     public ArrayList<Track> mTracks;
 
-    public GetTopTracksAsyncTask(Activity activity, ArrayList<Track> list, PlaylistAdapter adapter) {
+    public GetTopTracksAsyncTask(Activity activity, ArrayList<Track> list,
+                                 PlaylistAdapter adapter) {
         this.mActivity = activity;
         this.mTracks = list;
         this.mPlaylistAdapter = adapter;

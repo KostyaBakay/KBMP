@@ -26,7 +26,8 @@ public class PlayTrackAsyncTask extends AsyncTask<String, Void, Void> {
 
     @Override
     protected Void doInBackground(String... params) {
-        VKRequest searchSongRequest = new VKRequest("audio.search", VKParameters.from(VKApiConst.Q, params[0]));
+        VKRequest searchSongRequest =
+                new VKRequest("audio.search", VKParameters.from(VKApiConst.Q, params[0]));
         searchSongRequest.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -36,14 +37,14 @@ public class PlayTrackAsyncTask extends AsyncTask<String, Void, Void> {
 
                 if (trackList != null) {
                     song = trackList.get(0).getArtist() + " - " + trackList.get(0).getTitle();
-                    AppData.songUrl = trackList.get(0).getUrl();
+                    AppData.sSongUrl = trackList.get(0).getUrl();
                     Log.d(PlayTrackAsyncTask.class.getSimpleName(), song);
-                    Log.d(PlayTrackAsyncTask.class.getSimpleName(), AppData.songUrl);
+                    Log.d(PlayTrackAsyncTask.class.getSimpleName(), AppData.sSongUrl);
                 } else {
                     Log.e(PlayTrackAsyncTask.class.getSimpleName(), "trackList is null");
                 }
 
-                AppData.audioPlayer.play(mContext, AppData.songUrl);
+                AppData.sAudioPlayer.play(mContext, AppData.sSongUrl);
                 AppData.isSongPlayed = true;
             }
         });

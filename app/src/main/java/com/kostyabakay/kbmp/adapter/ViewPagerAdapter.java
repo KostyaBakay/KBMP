@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.kostyabakay.kbmp.fragment.LocalTracksFragment;
 import com.kostyabakay.kbmp.fragment.PlayTrackFragment;
-import com.kostyabakay.kbmp.fragment.PlaylistFragment;
+import com.kostyabakay.kbmp.fragment.TopTracksFragment;
 import com.kostyabakay.kbmp.fragment.BasicFirstItemViewPagerFragment;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
 import com.kostyabakay.kbmp.util.AppData;
@@ -20,9 +20,14 @@ import java.util.ArrayList;
  * and returns created fragment for the corresponding page.
  */
 public class ViewPagerAdapter extends FragmentPagerAdapter {
-    private Fragment mPlaylistFragment, mPlayTrackFragment, mLocalTracksFragment, mBasicFirstItemViewPagerFragment;
+    private Fragment mBasicFirstItemViewPagerFragment;
+    private Fragment mTopTracksFragment;
+    private Fragment mLocalTracksFragment;
+    private Fragment mPlayTrackFragment;
     private ArrayList<Track> mTracks = new ArrayList<>();
-    private Track mPreviousTrack, mCurrentTrack, mNextTrack;
+    private Track mPreviousTrack;
+    private Track mCurrentTrack;
+    private Track mNextTrack;
     private int mCurrentTrackItemIndex;
 
     public ViewPagerAdapter(FragmentManager fm) {
@@ -33,11 +38,11 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int pos) {
         switch (pos) {
             case 0:
-                return getFirstItemViewPager();
+                return getFirstPageViewPager();
             case 1:
                 return getPlayTrackFragment();
             default:
-                return getFirstItemViewPager();
+                return getFirstPageViewPager();
         }
     }
 
@@ -53,10 +58,10 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    public Fragment getFirstItemViewPager() {
-        if (AppData.selectedNavigationDrawerItem == Constants.LAST_FM_TOP_TRACKS) {
-            return getPlaylistFragment();
-        } else if (AppData.selectedNavigationDrawerItem == Constants.USER_LOCAL_TRACKS) {
+    public Fragment getFirstPageViewPager() {
+        if (AppData.sSelectedNavigationDrawerItem == Constants.LAST_FM_TOP_TRACKS) {
+            return getTopTracksFragment();
+        } else if (AppData.sSelectedNavigationDrawerItem == Constants.USER_LOCAL_TRACKS) {
             return getLocalTracksFragment();
         } else {
             return getBasicFirstItemViewPager();
@@ -70,11 +75,11 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         return mBasicFirstItemViewPagerFragment;
     }
 
-    public Fragment getPlaylistFragment() {
-        if (mPlaylistFragment == null) {
-            mPlaylistFragment = PlaylistFragment.newInstance();
+    public Fragment getTopTracksFragment() {
+        if (mTopTracksFragment == null) {
+            mTopTracksFragment = TopTracksFragment.newInstance();
         }
-        return mPlaylistFragment;
+        return mTopTracksFragment;
     }
 
     public Fragment getPlayTrackFragment() {

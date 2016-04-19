@@ -10,6 +10,7 @@ import com.vk.sdk.VKSdk;
 
 /**
  * Created by Kostya on 20.03.2016.
+ * Base class for maintain global application state.
  */
 public class Application extends android.app.Application {
 

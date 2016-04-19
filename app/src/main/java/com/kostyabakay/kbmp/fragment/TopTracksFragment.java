@@ -26,34 +26,37 @@ import java.util.ArrayList;
  * Created by Kostya on 10.03.2016.
  * This class represents the list of different music tracks.
  */
-public class PlaylistFragment extends Fragment {
+public class TopTracksFragment extends Fragment {
     private PlaylistAdapter mPlaylistAdapter;
     private ListView mListView;
     private ArrayList<Track> mTracks = new ArrayList<>();
     private Track mCurrentTrack;
     private int mTrackPosition;
 
-    public static PlaylistFragment newInstance() {
-        PlaylistFragment fragment = new PlaylistFragment();
+    public static TopTracksFragment newInstance() {
+        TopTracksFragment fragment = new TopTracksFragment();
         Bundle bundle = new Bundle();
         fragment.setArguments(bundle);
         return fragment;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d(PlaylistFragment.class.getSimpleName(), "onCreateView");
-        View view = inflater.inflate(R.layout.fragment_playlist, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        Log.d(TopTracksFragment.class.getSimpleName(), "onCreateView");
+        View view = inflater.inflate(R.layout.fragment_top_tracks, container, false);
         MainActivity activity = (MainActivity) getActivity();
         if (activity.isNetworkConnected()) {
             if (!VKSdk.isLoggedIn()) {
-                Toast.makeText(getActivity(), R.string.please_log_in_to_vk, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),
+                        R.string.please_log_in_to_vk, Toast.LENGTH_SHORT).show();
                 return inflater.inflate(R.layout.fragment_starting, container, false);
             } else {
                 return view;
             }
         } else {
-            Toast.makeText(getActivity(), R.string.please_check_internet_connection, Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(),
+                    R.string.please_check_internet_connection, Toast.LENGTH_LONG).show();
             return inflater.inflate(R.layout.fragment_starting, container, false);
         }
     }
@@ -61,7 +64,7 @@ public class PlaylistFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(PlaylistFragment.class.getSimpleName(), "onStart");
+        Log.d(TopTracksFragment.class.getSimpleName(), "onStart");
         if (VKSdk.isLoggedIn()) {
             setupUI();
             setTopTracksToListView();
@@ -89,7 +92,8 @@ public class PlaylistFragment extends Fragment {
      * Gets top tracks from last.fm with chart.getTopTracks API method.
      */
     private void getTopTracks() {
-        GetTopTracksAsyncTask getTopTracksAsyncTask = new GetTopTracksAsyncTask(getActivity(), mTracks, mPlaylistAdapter);
+        GetTopTracksAsyncTask getTopTracksAsyncTask = new GetTopTracksAsyncTask(getActivity(),
+                mTracks, mPlaylistAdapter);
         getTopTracksAsyncTask.execute();
     }
 
@@ -122,7 +126,7 @@ public class PlaylistFragment extends Fragment {
      * Updates AudioPlayer data.
      */
     private void updateAudioPlayer() {
-        if (AppData.isSongPlayed) AppData.audioPlayer.stop();
+        if (AppData.isSongPlayed) AppData.sAudioPlayer.stop();
     }
 
     /**
@@ -136,7 +140,7 @@ public class PlaylistFragment extends Fragment {
      * Plays track from vk.com using data from last.fm.
      */
     private void playTrack() {
-        AppData.playingTrackMode = Constants.NETWORK_PLAYING_TRACK_MODE;
+        AppData.sPlayingTrackMode = Constants.NETWORK_PLAYING_TRACK_MODE;
         PlayTrackAsyncTask playTrackAsyncTask = new PlayTrackAsyncTask(getActivity());
         playTrackAsyncTask.execute(createCurrentSongFullName());
         AppData.isSongPlayed = true;
@@ -156,14 +160,15 @@ public class PlaylistFragment extends Fragment {
      */
     private void updateViewPager() {
         ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrack(mCurrentTrack);
-        ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrackItemIndex(mTrackPosition);
+        ((MainActivity) getActivity()).getViewPagerAdapter()
+                .setCurrentTrackItemIndex(mTrackPosition);
         ((MainActivity) getActivity()).getViewPager().setCurrentItem(1);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(PlaylistFragment.class.getSimpleName(), "onDestroy");
-        AppData.audioPlayer.stop();
+        Log.d(TopTracksFragment.class.getSimpleName(), "onDestroy");
+        AppData.sAudioPlayer.stop();
     }
 }

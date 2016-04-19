@@ -11,6 +11,7 @@ import com.kostyabakay.kbmp.R;
 
 /**
  * Created by Kostya on 18.04.2016.
+ * This fragment appears when application is starting.
  */
 public class StartingFragment extends Fragment {
 
@@ -22,7 +23,8 @@ public class StartingFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         Log.d(StartingFragment.class.getSimpleName(), "onCreateView");
         return inflater.inflate(R.layout.fragment_starting, container, false);
     }

@@ -6,8 +6,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
 
-import com.kostyabakay.kbmp.R;
-
 import java.io.IOException;
 
 /**
@@ -16,23 +14,6 @@ import java.io.IOException;
  */
 public class AudioPlayer {
     private MediaPlayer mMediaPlayer = new MediaPlayer();
-
-    /**
-     * Plays local audio file.
-     *
-     * @param context
-     */
-    public void play(Context context) {
-        stop();
-        mMediaPlayer = MediaPlayer.create(context, R.raw.one_small_step);
-        mMediaPlayer.start();
-
-        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            public void onCompletion(MediaPlayer mp) {
-                stop();
-            }
-        });
-    }
 
     /**
      * Plays audio file from some URL or local path.
@@ -51,8 +32,6 @@ public class AudioPlayer {
                 mMediaPlayer.setDataSource(context, songUri);
                 mMediaPlayer.prepare(); // Might take long! (for buffering, etc)
                 mMediaPlayer.start();
-            } else {
-                play(context);
             }
         } catch (IOException e) {
             Log.e(AudioPlayer.class.getSimpleName(), "IOException of MediaPlayer");

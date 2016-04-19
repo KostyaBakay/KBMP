@@ -8,29 +8,35 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="8dp">
 
-    <TextView
-        android:id="@+id/playlist_item_id"
-        android:layout_width="32dp"
+    <ImageView
+        android:id="@+id/play_icon"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold" />
+        android:src="@mipmap/ic_play" />
 
     <LinearLayout
         android:id="@+id/playlist_artist_and_song_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/playlist_item_id"
+        android:layout_toRightOf="@+id/play_icon"
         android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/playlist_artist_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/playlist_song_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold" />
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/primary_text" />
+
+        <TextView
+            android:id="@+id/playlist_artist_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/secondary_text" />
     </LinearLayout>
 </RelativeLayout>

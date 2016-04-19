@@ -8,7 +8,8 @@ public enum JournalURL {
     PHYSICS("mathematical.json"),
     MATHEMATICAL("physics.json");
 
-    public static final String BASE_URL = "https://dl.dropboxusercontent.com/u/17192683/rest/journals/";
+    public static final String BASE_URL =
+            "https://dl.dropboxusercontent.com/u/17192683/rest/journals/";
 
     private String url;
     JournalURL(String url) {

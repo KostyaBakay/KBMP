@@ -14,6 +14,7 @@ import android.widget.ListView;
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.activity.MainActivity;
 import com.kostyabakay.kbmp.adapter.PlaylistAdapter;
+import com.kostyabakay.kbmp.model.chart.top.tracks.Artist;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
 import com.kostyabakay.kbmp.util.AppData;
 import com.kostyabakay.kbmp.util.Constants;
@@ -43,7 +44,8 @@ public class LocalTracksFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         Log.d(LocalTracksFragment.class.getSimpleName(), "onCreateView");
         return inflater.inflate(R.layout.fragment_local_tracks, container, false);
     }
@@ -102,8 +104,9 @@ public class LocalTracksFragment extends Fragment {
     private ArrayList<Track> getAudioList() {
         final Cursor cursor = getActivity().getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                new String[]{MediaStore.Audio.Media.DISPLAY_NAME, MediaStore.Audio.Media.DATA},
-                null, null, "LOWER(" + MediaStore.Audio.Media.TITLE + ") ASC");
+                new String[]{MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media.TITLE,
+                        MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.DATA}, null, null,
+                "LOWER(" + MediaStore.Audio.Media.TITLE + ") ASC");
 
         int count = cursor.getCount();
         Track[] songs = new Track[count];
@@ -113,8 +116,14 @@ public class LocalTracksFragment extends Fragment {
         if (cursor.moveToFirst()) {
             do {
                 songs[i] = new Track();
-                songs[i].setName(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)));
-                mAudioPath[i] = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+                Artist artist = new Artist();
+                artist.setName(cursor.getString(cursor.getColumnIndexOrThrow
+                        (MediaStore.Audio.Media.ARTIST)));
+                songs[i].setArtist(artist);
+                songs[i].setName(cursor.getString(cursor.getColumnIndexOrThrow
+                        (MediaStore.Audio.Media.TITLE)));
+                mAudioPath[i] = cursor.getString(cursor.getColumnIndexOrThrow
+                        (MediaStore.Audio.Media.DATA));
                 i++;
             } while (cursor.moveToNext());
         }
@@ -129,7 +138,7 @@ public class LocalTracksFragment extends Fragment {
      * Updates AudioPlayer data.
      */
     private void updateAudioPlayer() {
-        if (AppData.isSongPlayed) AppData.audioPlayer.stop();
+        if (AppData.isSongPlayed) AppData.sAudioPlayer.stop();
         AppData.isSongPlayed = true;
     }
 
@@ -142,8 +151,8 @@ public class LocalTracksFragment extends Fragment {
 
     private void play() {
         try {
-            AppData.previousSongPath = mAudioPath[mTrackPosition - 1];
-            AppData.nextSongPath = mAudioPath[mTrackPosition + 1];
+            AppData.sPreviousSongPath = mAudioPath[mTrackPosition - 1];
+            AppData.sNextSongPath = mAudioPath[mTrackPosition + 1];
             playTrack(mAudioPath[mTrackPosition]);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -157,11 +166,12 @@ public class LocalTracksFragment extends Fragment {
     /**
      * Plays track from local path.
      */
-    private void playTrack(String path) throws IllegalArgumentException, IllegalStateException, IOException {
+    private void playTrack(String path)
+            throws IllegalArgumentException, IllegalStateException, IOException {
         Log.d(LocalTracksFragment.class.getSimpleName(), "playTrack: " + path);
-        AppData.playingTrackMode = Constants.LOCAL_PLAYING_TRACK_MODE;
-        AppData.currentSongPath = path;
-        AppData.audioPlayer.play(getActivity(), AppData.currentSongPath);
+        AppData.sPlayingTrackMode = Constants.LOCAL_PLAYING_TRACK_MODE;
+        AppData.sCurrentSongPath = path;
+        AppData.sAudioPlayer.play(getActivity(), AppData.sCurrentSongPath);
         AppData.isSongPlayed = true;
     }
 
@@ -170,7 +180,8 @@ public class LocalTracksFragment extends Fragment {
      */
     private void updateViewPager() {
         ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrack(mCurrentTrack);
-        ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrackItemIndex(mTrackPosition);
+        ((MainActivity) getActivity())
+                .getViewPagerAdapter().setCurrentTrackItemIndex(mTrackPosition);
         ((MainActivity) getActivity()).getViewPager().setCurrentItem(1);
     }
 
@@ -178,6 +189,6 @@ public class LocalTracksFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         Log.d(LocalTracksFragment.class.getSimpleName(), "onDestroy");
-        AppData.audioPlayer.stop();
+        AppData.sAudioPlayer.stop();
     }
 }

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Kostya on 15.03.2016.
- * This is adapter for PlaylistFragment.
+ * This is adapter for the first page of View Pager.
  */
 public class PlaylistAdapter extends ArrayAdapter<Track> {
     private Context mContext;
@@ -46,9 +46,9 @@ public class PlaylistAdapter extends ArrayAdapter<Track> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater =
+                (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.playlist_item, parent, false);
-        TextView songId = (TextView) view.findViewById(R.id.playlist_item_id);
         TextView artistName = (TextView) view.findViewById(R.id.playlist_artist_name);
         TextView songName = (TextView) view.findViewById(R.id.playlist_song_name);
         Track track = mTracks.get(position);
@@ -56,10 +56,6 @@ public class PlaylistAdapter extends ArrayAdapter<Track> {
 
         if (track.getArtist() != null) {
             artist = track.getArtist();
-        }
-
-        if (track.getMbid() != null) {
-            songId.setText(track.getMbid());
         }
 
         if (artist != null) {

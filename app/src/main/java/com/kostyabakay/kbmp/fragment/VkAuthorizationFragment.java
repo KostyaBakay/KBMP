@@ -20,10 +20,16 @@ import com.vk.sdk.api.VKError;
  * This is fragment for vk.com authorization.
  */
 public class VkAuthorizationFragment extends Fragment {
-    private String[] scope = new String[]{VKScope.AUDIO, VKScope.MESSAGES, VKScope.FRIENDS, VKScope.WALL};
+    private String[] scope = new String[]{
+            VKScope.AUDIO,
+            VKScope.MESSAGES,
+            VKScope.FRIENDS,
+            VKScope.WALL
+    };
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         Log.d(VkAuthorizationFragment.class.getSimpleName(), "onCreateView");
         return inflater.inflate(R.layout.fragment_vk_authorization, container, false);
     }
@@ -42,12 +48,14 @@ public class VkAuthorizationFragment extends Fragment {
 
             @Override
             public void onResult(VKAccessToken res) {
-                Log.d(VkAuthorizationFragment.class.getSimpleName(), "onResult: User successfully logged");
+                Log.d(VkAuthorizationFragment.class.getSimpleName(),
+                        "onResult: User successfully logged");
             }
 
             @Override
             public void onError(VKError error) {
-                Log.d(VkAuthorizationFragment.class.getSimpleName(), "onResult: An authorization error");
+                Log.d(VkAuthorizationFragment.class.getSimpleName(),
+                        "onResult: An authorization error");
             }
         })) {
             super.onActivityResult(requestCode, resultCode, data);

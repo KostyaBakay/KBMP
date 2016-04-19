@@ -36,13 +36,22 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
     private final int LAST_SONG_INDEX = 49;
     private MediaPlayer mMediaPlayer;
     private Handler mHandler = new Handler();
-    private TextView mArtistNameTextView, mSongNameTextView, mSongCurrentTimeTextView, mSongDurationTextView;
+    private TextView mArtistNameTextView;
+    private TextView mSongNameTextView;
+    private TextView mSongCurrentTimeTextView;
+    private TextView mSongDurationTextView;
     private ArrayList<Track> mTracks;
-    private Track mPreviousTrack, mCurrentTrack, mNextTrack;
+    private Track mPreviousTrack;
+    private Track mCurrentTrack;
+    private Track mNextTrack;
     private Artist mCurrentArtist;
     private SeekBar mTimelineSeekBar;
-    private ImageView mSkipPreviousSongImageView, mPlaySongImageView, mSkipNextSongImageView, mArtistImageView;
-    private int mCurrentTrackPosition, mTotalDuration;
+    private ImageView mSkipPreviousSongImageView;
+    private ImageView mPlaySongImageView;
+    private ImageView mSkipNextSongImageView;
+    private ImageView mArtistImageView;
+    private int mCurrentTrackPosition;
+    private int mTotalDuration;
 
     public static PlayTrackFragment newInstance() {
         PlayTrackFragment fragment = new PlayTrackFragment();
@@ -52,7 +61,8 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         Log.d(PlayTrackFragment.class.getSimpleName(), "onCreateView");
         return inflater.inflate(R.layout.fragment_play_track, container, false);
     }
@@ -84,9 +94,11 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
     }
 
     private void listenViewPagerChanges() {
-        ((MainActivity) getActivity()).getViewPager().setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        ((MainActivity) getActivity()).getViewPager()
+                .setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            public void onPageScrolled(int position,
+                                       float positionOffset, int positionOffsetPixels) {
 
             }
 
@@ -107,7 +119,8 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
     }
 
     private void listenSeekBar() {
-        AppData.audioPlayer.getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+        AppData.sAudioPlayer.getMediaPlayer()
+                .setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             public void onPrepared(MediaPlayer mp) {
                 mTotalDuration = mp.getDuration();
                 mTimelineSeekBar.setMax(mTotalDuration);
@@ -120,20 +133,28 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
      * Initialization of the TextView views.
      */
     private void setupTextView() {
-        mArtistNameTextView = (TextView) getActivity().findViewById(R.id.play_track_artist_name_text_view);
-        mSongNameTextView = (TextView) getActivity().findViewById(R.id.play_track_song_name_text_view);
-        mSongCurrentTimeTextView = (TextView) getActivity().findViewById(R.id.play_track_song_current_time_text_view);
-        mSongDurationTextView = (TextView) getActivity().findViewById(R.id.play_track_song_duration_text_view);
+        mArtistNameTextView = (TextView)
+                getActivity().findViewById(R.id.play_track_artist_name_text_view);
+        mSongNameTextView = (TextView)
+                getActivity().findViewById(R.id.play_track_song_name_text_view);
+        mSongCurrentTimeTextView = (TextView)
+                getActivity().findViewById(R.id.play_track_song_current_time_text_view);
+        mSongDurationTextView = (TextView)
+                getActivity().findViewById(R.id.play_track_song_duration_text_view);
     }
 
     /**
      * Initialization of the ImageView views.
      */
     private void setupImageView() {
-        mArtistImageView = (ImageView) getActivity().findViewById(R.id.play_track_artist_image_view);
-        mSkipPreviousSongImageView = (ImageView) getActivity().findViewById(R.id.skip_previous_song_image_button);
-        mPlaySongImageView = (ImageView) getActivity().findViewById(R.id.play_song_image_button);
-        mSkipNextSongImageView = (ImageView) getActivity().findViewById(R.id.skip_next_song_image_button);
+        mArtistImageView = (ImageView)
+                getActivity().findViewById(R.id.play_track_artist_image_view);
+        mSkipPreviousSongImageView = (ImageView)
+                getActivity().findViewById(R.id.skip_previous_song_image_button);
+        mPlaySongImageView = (ImageView)
+                getActivity().findViewById(R.id.play_song_image_button);
+        mSkipNextSongImageView = (ImageView)
+                getActivity().findViewById(R.id.skip_next_song_image_button);
     }
 
     /**
@@ -152,12 +173,12 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
         mSkipPreviousSongImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (AppData.audioPlayer.getMediaPlayer() != null) {
+                if (AppData.sAudioPlayer.getMediaPlayer() != null) {
                     getCurrentTrack();
                     changePreviousTrackToCurrent();
                     updateViewPagerAdapter(mPreviousTrack, mCurrentTrackPosition);
                     updateArtistImage(mPreviousTrack);
-                    AppData.currentSongPath = AppData.previousSongPath;
+                    AppData.sCurrentSongPath = AppData.sPreviousSongPath;
                     playSong(createPreviousSongFullName());
                     updatePlayTrackFragment();
                 } else {
@@ -174,14 +195,14 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
         mPlaySongImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (AppData.audioPlayer.getMediaPlayer() != null) {
+                if (AppData.sAudioPlayer.getMediaPlayer() != null) {
                     if (!AppData.isSongPlayed) {
                         mPlaySongImageView.setImageResource(R.mipmap.ic_pause);
-                        AppData.audioPlayer.resume();
+                        AppData.sAudioPlayer.resume();
                         AppData.isSongPlayed = true;
                     } else {
                         mPlaySongImageView.setImageResource(R.mipmap.ic_play);
-                        AppData.audioPlayer.pause();
+                        AppData.sAudioPlayer.pause();
                         AppData.isSongPlayed = false;
                     }
                 } else {
@@ -198,12 +219,12 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
         mSkipNextSongImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (AppData.audioPlayer.getMediaPlayer() != null) {
+                if (AppData.sAudioPlayer.getMediaPlayer() != null) {
                     getCurrentTrack();
                     changeNextTrackToCurrent();
                     updateViewPagerAdapter(mNextTrack, mCurrentTrackPosition);
                     updateArtistImage(mNextTrack);
-                    AppData.currentSongPath = AppData.nextSongPath;
+                    AppData.sCurrentSongPath = AppData.sNextSongPath;
                     playSong(createNextSongFullName());
                     updatePlayTrackFragment();
                 } else {
@@ -219,7 +240,8 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
     private void getCurrentTrack() {
         mTracks = ((MainActivity) getActivity()).getViewPagerAdapter().getTracks();
         mCurrentTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrack();
-        mCurrentTrackPosition = ((MainActivity) getActivity()).getViewPagerAdapter().getCurrentTrackItemIndex();
+        mCurrentTrackPosition = ((MainActivity)
+                getActivity()).getViewPagerAdapter().getCurrentTrackItemIndex();
     }
 
     /**
@@ -253,7 +275,8 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
      */
     private void changePreviousTrackToCurrent() {
         if (mCurrentTrackPosition > FIRST_SONG_INDEX) {
-            mPreviousTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getPreviousTrack(mCurrentTrackPosition);
+            mPreviousTrack = ((MainActivity)
+                    getActivity()).getViewPagerAdapter().getPreviousTrack(mCurrentTrackPosition);
             mCurrentTrackPosition--;
         } else {
             mPreviousTrack = mCurrentTrack;
@@ -265,7 +288,8 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
      */
     private void changeNextTrackToCurrent() {
         if (mCurrentTrackPosition < LAST_SONG_INDEX) {
-            mNextTrack = ((MainActivity) getActivity()).getViewPagerAdapter().getNextTrack(mCurrentTrackPosition);
+            mNextTrack = ((MainActivity)
+                    getActivity()).getViewPagerAdapter().getNextTrack(mCurrentTrackPosition);
             mCurrentTrackPosition++;
         } else {
             mNextTrack = mCurrentTrack;
@@ -287,7 +311,7 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
     public void onDestroy() {
         super.onDestroy();
         Log.d(PlayTrackFragment.class.getSimpleName(), "onDestroy");
-        AppData.audioPlayer.stop();
+        AppData.sAudioPlayer.stop();
     }
 
     /**
@@ -296,11 +320,11 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
      * @param trackName
      */
     private void playSong(String trackName) {
-        if (AppData.playingTrackMode == Constants.NETWORK_PLAYING_TRACK_MODE) {
+        if (AppData.sPlayingTrackMode == Constants.NETWORK_PLAYING_TRACK_MODE) {
             PlayTrackAsyncTask playTrackAsyncTask = new PlayTrackAsyncTask(getActivity());
             playTrackAsyncTask.execute(trackName);
-        } else if (AppData.playingTrackMode == Constants.LOCAL_PLAYING_TRACK_MODE) {
-            AppData.audioPlayer.play(getActivity(), AppData.currentSongPath);
+        } else if (AppData.sPlayingTrackMode == Constants.LOCAL_PLAYING_TRACK_MODE) {
+            AppData.sAudioPlayer.play(getActivity(), AppData.sCurrentSongPath);
         }
     }
 
@@ -308,7 +332,7 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
      * Updates PlayTrackFragment with information about current track.
      */
     public void updatePlayTrackFragment() {
-        if (AppData.playingTrackMode == Constants.LOCAL_PLAYING_TRACK_MODE) {
+        if (AppData.sPlayingTrackMode == Constants.LOCAL_PLAYING_TRACK_MODE) {
             clearPlayTrackFragment();
         }
 
@@ -348,7 +372,7 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
      * this image and update PlayTrackFragment with this artist image.
      */
     private void updateArtistImage(Track track) {
-        if (AppData.playingTrackMode == Constants.NETWORK_PLAYING_TRACK_MODE) {
+        if (AppData.sPlayingTrackMode == Constants.NETWORK_PLAYING_TRACK_MODE) {
             List<Image> images = track.getImage();
             Image image = images.get(images.size() - 1);
 
@@ -374,7 +398,7 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
      */
     private Runnable runnable = new Runnable() {
         public void run() {
-            int progress = AppData.audioPlayer.getMediaPlayer().getCurrentPosition();
+            int progress = AppData.sAudioPlayer.getMediaPlayer().getCurrentPosition();
             mTimelineSeekBar.setProgress(progress);
             mHandler.postDelayed(this, 100);
         }
@@ -385,7 +409,7 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
         mSongCurrentTimeTextView.setText(String.valueOf(progress / 1000));
 
         if (fromUser) {
-            AppData.audioPlayer.getMediaPlayer().seekTo(progress);
+            AppData.sAudioPlayer.getMediaPlayer().seekTo(progress);
         }
 
     }
