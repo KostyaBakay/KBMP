@@ -10,6 +10,8 @@ public class AppData {
     private static AppData sAppData = new AppData();
     public static AudioPlayer sAudioPlayer = new AudioPlayer();
     public static boolean isSongPlayed;
+    public static String[] mAudioPath;
+    public static int mTrackPosition = 0;
     public static String sPreviousSongPath;
     public static String sCurrentSongPath;
     public static String sNextSongPath;

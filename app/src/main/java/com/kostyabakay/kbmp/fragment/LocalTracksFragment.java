@@ -31,10 +31,7 @@ public class LocalTracksFragment extends Fragment {
     private PlaylistAdapter mPlaylistAdapter;
     private ListView mListView;
     private ArrayList<Track> mTracks = new ArrayList<>();
-    private String[] mMusicList;
-    private String[] mAudioPath;
     private Track mCurrentTrack;
-    private int mTrackPosition;
 
     public static LocalTracksFragment newInstance() {
         LocalTracksFragment fragment = new LocalTracksFragment();
@@ -89,7 +86,7 @@ public class LocalTracksFragment extends Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mTrackPosition = position; // Makes global information about item position
+                AppData.mTrackPosition = position;
                 updateAudioPlayer();
                 setCurrentTrack();
                 play();
@@ -110,7 +107,7 @@ public class LocalTracksFragment extends Fragment {
 
         int count = cursor.getCount();
         Track[] songs = new Track[count];
-        mAudioPath = new String[count];
+        AppData.mAudioPath = new String[count];
         int i = 0;
 
         if (cursor.moveToFirst()) {
@@ -122,7 +119,7 @@ public class LocalTracksFragment extends Fragment {
                 songs[i].setArtist(artist);
                 songs[i].setName(cursor.getString(cursor.getColumnIndexOrThrow
                         (MediaStore.Audio.Media.TITLE)));
-                mAudioPath[i] = cursor.getString(cursor.getColumnIndexOrThrow
+                AppData.mAudioPath[i] = cursor.getString(cursor.getColumnIndexOrThrow
                         (MediaStore.Audio.Media.DATA));
                 i++;
             } while (cursor.moveToNext());
@@ -146,14 +143,18 @@ public class LocalTracksFragment extends Fragment {
      * Sets current track using information about track position.
      */
     private void setCurrentTrack() {
-        mCurrentTrack = mPlaylistAdapter.getItem(mTrackPosition);
+        mCurrentTrack = mPlaylistAdapter.getItem(AppData.mTrackPosition);
     }
 
     private void play() {
         try {
-            AppData.sPreviousSongPath = mAudioPath[mTrackPosition - 1];
-            AppData.sNextSongPath = mAudioPath[mTrackPosition + 1];
-            playTrack(mAudioPath[mTrackPosition]);
+            if (AppData.mTrackPosition > 0) {
+                AppData.sPreviousSongPath = AppData.mAudioPath[AppData.mTrackPosition - 1];
+            }
+
+            // TODO: NPE in the maximum track position
+            AppData.sNextSongPath = AppData.mAudioPath[AppData.mTrackPosition + 1];
+            playTrack(AppData.mAudioPath[AppData.mTrackPosition]);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (IllegalStateException e) {
@@ -181,7 +182,7 @@ public class LocalTracksFragment extends Fragment {
     private void updateViewPager() {
         ((MainActivity) getActivity()).getViewPagerAdapter().setCurrentTrack(mCurrentTrack);
         ((MainActivity) getActivity())
-                .getViewPagerAdapter().setCurrentTrackItemIndex(mTrackPosition);
+                .getViewPagerAdapter().setCurrentTrackItemIndex(AppData.mTrackPosition);
         ((MainActivity) getActivity()).getViewPager().setCurrentItem(1);
     }
 

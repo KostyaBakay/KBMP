@@ -277,6 +277,9 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
         if (mCurrentTrackPosition > FIRST_SONG_INDEX) {
             mPreviousTrack = ((MainActivity)
                     getActivity()).getViewPagerAdapter().getPreviousTrack(mCurrentTrackPosition);
+            if (AppData.sPlayingTrackMode == Constants.LOCAL_PLAYING_TRACK_MODE) {
+                AppData.sPreviousSongPath = AppData.mAudioPath[mCurrentTrackPosition - 1];
+            }
             mCurrentTrackPosition--;
         } else {
             mPreviousTrack = mCurrentTrack;
@@ -290,6 +293,9 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
         if (mCurrentTrackPosition < LAST_SONG_INDEX) {
             mNextTrack = ((MainActivity)
                     getActivity()).getViewPagerAdapter().getNextTrack(mCurrentTrackPosition);
+            if (AppData.sPlayingTrackMode == Constants.LOCAL_PLAYING_TRACK_MODE) {
+                AppData.sNextSongPath = AppData.mAudioPath[mCurrentTrackPosition + 1];
+            }
             mCurrentTrackPosition++;
         } else {
             mNextTrack = mCurrentTrack;
