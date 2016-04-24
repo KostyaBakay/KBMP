@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.kostyabakay.kbmp.R;
@@ -26,7 +27,18 @@ import com.kostyabakay.kbmp.fragment.VkAuthorizationFragment;
 import com.kostyabakay.kbmp.network.asynctask.GetJournalAsyncTask;
 import com.kostyabakay.kbmp.util.AppData;
 import com.kostyabakay.kbmp.util.Constants;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.vk.sdk.api.VKApiConst;
+import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKParameters;
+import com.vk.sdk.api.VKRequest;
+import com.vk.sdk.api.VKResponse;
 import com.vk.sdk.util.VKUtil;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 
@@ -38,6 +50,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Toolbar mToolbar;
+    private NavigationView mNavigationView;
     private ViewPager mViewPager;
     private ViewPagerAdapter mViewPagerAdapter;
     private VkAuthorizationFragment mVkAuthorizationFragment;
@@ -47,6 +60,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         Log.d(MainActivity.class.getSimpleName(), "onCreate");
         setupUI();
+        initImageLoader();
         startVkComponents();
         listenViewPager();
 
@@ -89,8 +103,8 @@ public class MainActivity extends AppCompatActivity
      * Initialization of NavigationView.
      */
     private void setupNavigationView() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
     }
 
     /**
@@ -100,6 +114,11 @@ public class MainActivity extends AppCompatActivity
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mViewPagerAdapter);
+    }
+
+    private void initImageLoader() {
+        ImageLoader imageLoader = ImageLoader.getInstance();
+        imageLoader.init(ImageLoaderConfiguration.createDefault(getApplicationContext()));
     }
 
     /**
@@ -222,7 +241,36 @@ public class MainActivity extends AppCompatActivity
 
     private void startVkComponents() {
         getFingerPrints();
+        setUserAvatar();
         mVkAuthorizationFragment = new VkAuthorizationFragment();
+    }
+
+    private void setUserAvatar() {
+        VKParameters params = new VKParameters();
+        params.put(VKApiConst.FIELDS, "photo_100");
+        VKRequest request = new VKRequest("users.get", params);
+
+        request.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+                try {
+                    JSONArray resp = response.json.getJSONArray("response");
+                    JSONObject user = resp.getJSONObject(0);
+                    String url = user.getString("photo_100");
+                    ImageView imageView = (ImageView) mNavigationView.getHeaderView(0).
+                            findViewById(R.id.user_avatar_navigation_drawer);
+                    ImageLoader.getInstance().displayImage(url, imageView);
+                } catch (JSONException e) {
+                    Log.d(MainActivity.class.getSimpleName(), "JSON getting trouble");
+                }
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+            }
+        });
     }
 
     private void getFingerPrints() {
