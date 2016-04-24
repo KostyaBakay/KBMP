@@ -7,6 +7,7 @@
     <string name="starting_fragment_message">This is online audio player. You can listen your local
         music, but if you want to listen online music you should log in to your vk.com account.</string>
 
+    <string name="artist_image">Artist image</string>
     <string name="artist_name">Artist name</string>
     <string name="song_name">Song name</string>
     <string name="zero_time">0:00</string>
