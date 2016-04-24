@@ -51,7 +51,7 @@
         android:paddingRight="24dp"
         android:text="@string/song_name"
         android:textColor="@color/primary_light"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <TextView
@@ -60,6 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/play_track_song_duration_text_view"
         android:gravity="center"
+        android:paddingBottom="4dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:text="@string/zero_time"
@@ -73,6 +74,7 @@
         android:layout_above="@+id/timeline_seekbar"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
+        android:paddingBottom="4dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:text="@string/zero_time"

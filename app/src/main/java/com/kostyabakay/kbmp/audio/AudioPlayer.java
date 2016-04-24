@@ -6,6 +6,8 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
 
+import com.kostyabakay.kbmp.util.AppData;
+
 import java.io.IOException;
 
 /**
@@ -31,6 +33,7 @@ public class AudioPlayer {
                 Uri songUri = Uri.parse(source);
                 mMediaPlayer.setDataSource(context, songUri);
                 mMediaPlayer.prepare(); // Might take long! (for buffering, etc)
+                AppData.sTrackDuration = mMediaPlayer.getDuration();
                 mMediaPlayer.start();
             }
         } catch (IOException e) {

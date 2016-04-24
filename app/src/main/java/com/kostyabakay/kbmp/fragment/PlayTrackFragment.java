@@ -34,7 +34,6 @@ import java.util.List;
 public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChangeListener {
     private final int FIRST_SONG_INDEX = 0;
     private final int LAST_SONG_INDEX = 49;
-    private MediaPlayer mMediaPlayer;
     private Handler mHandler = new Handler();
     private TextView mArtistNameTextView;
     private TextView mSongNameTextView;
@@ -96,37 +95,37 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
     private void listenViewPagerChanges() {
         ((MainActivity) getActivity()).getViewPager()
                 .setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position,
-                                       float positionOffset, int positionOffsetPixels) {
+                    @Override
+                    public void onPageScrolled(int position,
+                                               float positionOffset, int positionOffsetPixels) {
 
-            }
+                    }
 
-            @Override
-            public void onPageSelected(int position) {
-                if (position == 1) {
-                    Log.d(PlayTrackFragment.class.getSimpleName(), "onPageSelected");
-                    updatePlayTrackFragment();
-                    listenSeekBar();
-                }
-            }
+                    @Override
+                    public void onPageSelected(int position) {
+                        if (position == 1) {
+                            Log.d(PlayTrackFragment.class.getSimpleName(), "onPageSelected");
+                            updatePlayTrackFragment();
+                            listenSeekBar();
+                        }
+                    }
 
-            @Override
-            public void onPageScrollStateChanged(int state) {
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
 
-            }
-        });
+                    }
+                });
     }
 
     private void listenSeekBar() {
         AppData.sAudioPlayer.getMediaPlayer()
                 .setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            public void onPrepared(MediaPlayer mp) {
-                mTotalDuration = mp.getDuration();
-                mTimelineSeekBar.setMax(mTotalDuration);
-                mHandler.postDelayed(runnable, 100);
-            }
-        });
+                    public void onPrepared(MediaPlayer mp) {
+                        mTotalDuration = mp.getDuration();
+                        mTimelineSeekBar.setMax(mTotalDuration);
+                        mHandler.postDelayed(runnable, 100);
+                    }
+                });
     }
 
     /**
@@ -278,7 +277,7 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
             mPreviousTrack = ((MainActivity)
                     getActivity()).getViewPagerAdapter().getPreviousTrack(mCurrentTrackPosition);
             if (AppData.sPlayingTrackMode == Constants.LOCAL_PLAYING_TRACK_MODE) {
-                AppData.sPreviousSongPath = AppData.mAudioPath[mCurrentTrackPosition - 1];
+                AppData.sPreviousSongPath = AppData.sAudioPath[mCurrentTrackPosition - 1];
             }
             mCurrentTrackPosition--;
         } else {
@@ -294,7 +293,7 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
             mNextTrack = ((MainActivity)
                     getActivity()).getViewPagerAdapter().getNextTrack(mCurrentTrackPosition);
             if (AppData.sPlayingTrackMode == Constants.LOCAL_PLAYING_TRACK_MODE) {
-                AppData.sNextSongPath = AppData.mAudioPath[mCurrentTrackPosition + 1];
+                AppData.sNextSongPath = AppData.sAudioPath[mCurrentTrackPosition + 1];
             }
             mCurrentTrackPosition++;
         } else {
@@ -351,7 +350,6 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
             }
 
             mSongNameTextView.setText(mCurrentTrack.getName());
-            mSongDurationTextView.setText(mCurrentTrack.getDuration());
             updateArtistImage(mCurrentTrack); // TODO: Fix double call method
             updatePlayButton();
         }
@@ -412,7 +410,8 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        mSongCurrentTimeTextView.setText(String.valueOf(progress / 1000));
+        updateTrackCurrentTime(progress);
+        updateTrackDuration();
 
         if (fromUser) {
             AppData.sAudioPlayer.getMediaPlayer().seekTo(progress);
@@ -428,5 +427,25 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 
+    }
+
+    private void updateTrackCurrentTime(int progress) {
+        int trackCurrentTimeSeconds = progress / 1000;
+        int trackCurrentTimeMinutes = trackCurrentTimeSeconds / 60;
+        trackCurrentTimeSeconds = trackCurrentTimeSeconds - trackCurrentTimeMinutes * 60;
+        String trackCurrentTimeSecondsString = String.valueOf(trackCurrentTimeSeconds);
+        if (trackCurrentTimeSeconds < 10) {
+            trackCurrentTimeSecondsString = "0" + String.valueOf(trackCurrentTimeSeconds);
+        }
+        mSongCurrentTimeTextView.setText(String.valueOf(trackCurrentTimeMinutes +
+                ":" + trackCurrentTimeSecondsString));
+    }
+
+    private void updateTrackDuration() {
+        int trackDurationSeconds = AppData.sTrackDuration / 1000;
+        int trackDurationMinutes = trackDurationSeconds / 60;
+        trackDurationSeconds = trackDurationSeconds - trackDurationMinutes * 60;
+        mSongDurationTextView.setText(String.valueOf(trackDurationMinutes +
+                ":" + trackDurationSeconds));
     }
 }
