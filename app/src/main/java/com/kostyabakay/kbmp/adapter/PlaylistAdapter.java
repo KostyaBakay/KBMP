@@ -46,24 +46,38 @@ public class PlaylistAdapter extends ArrayAdapter<Track> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater =
-                (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.playlist_item, parent, false);
-        TextView artistName = (TextView) view.findViewById(R.id.playlist_artist_name);
-        TextView songName = (TextView) view.findViewById(R.id.playlist_song_name);
-        Track track = mTracks.get(position);
-        Artist artist = null;
-
-        if (track.getArtist() != null) {
-            artist = track.getArtist();
+        ViewHolder viewHolder;
+        if (convertView == null) {
+            LayoutInflater inflater =
+                    (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.playlist_item, parent, false);
+            viewHolder = new ViewHolder();
+            viewHolder.artistName = (TextView) convertView.findViewById(R.id.playlist_artist_name);
+            viewHolder.songName = (TextView) convertView.findViewById(R.id.playlist_song_name);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        if (artist != null) {
-            artistName.setText(artist.getName());
+        viewHolder.track = mTracks.get(position);
+        viewHolder.artist = null;
+
+        if (viewHolder.track.getArtist() != null) {
+            viewHolder.artist = viewHolder.track.getArtist();
         }
 
-        songName.setText(track.getName());
-        return view;
+        if (viewHolder.artist != null) {
+            viewHolder.artistName.setText(viewHolder.artist.getName());
+        }
+
+        viewHolder.songName.setText(viewHolder.track.getName());
+        return convertView;
     }
 
+    static class ViewHolder {
+        Track track;
+        Artist artist;
+        TextView artistName;
+        TextView songName;
+    }
 }
