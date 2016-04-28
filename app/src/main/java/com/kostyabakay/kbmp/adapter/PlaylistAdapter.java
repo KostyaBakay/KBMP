@@ -5,13 +5,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Artist;
+import com.kostyabakay.kbmp.model.chart.top.tracks.Image;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
+import com.kostyabakay.kbmp.util.Constants;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Kostya on 15.03.2016.
@@ -47,6 +53,8 @@ public class PlaylistAdapter extends ArrayAdapter<Track> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
+        ImageLoader imageLoader = ImageLoader.getInstance();
+        imageLoader.init(ImageLoaderConfiguration.createDefault(mContext));
         if (convertView == null) {
             LayoutInflater inflater =
                     (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -54,6 +62,7 @@ public class PlaylistAdapter extends ArrayAdapter<Track> {
             viewHolder = new ViewHolder();
             viewHolder.artistName = (TextView) convertView.findViewById(R.id.playlist_artist_name);
             viewHolder.songName = (TextView) convertView.findViewById(R.id.playlist_song_name);
+            viewHolder.artistImage = (ImageView) convertView.findViewById(R.id.play_icon);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -71,6 +80,16 @@ public class PlaylistAdapter extends ArrayAdapter<Track> {
         }
 
         viewHolder.songName.setText(viewHolder.track.getName());
+        List<Image> images = viewHolder.track.getImage();
+
+        try {
+            ImageLoader.getInstance()
+                    .displayImage(images.get(Constants.ARTIST_IMAGE_SIZE_EXTRA_LARGE)
+                            .getText(), viewHolder.artistImage);
+        } catch (IndexOutOfBoundsException e) {
+            viewHolder.artistImage.setImageResource(R.drawable.last_fm_logo);
+        }
+
         return convertView;
     }
 
@@ -79,5 +98,6 @@ public class PlaylistAdapter extends ArrayAdapter<Track> {
         Artist artist;
         TextView artistName;
         TextView songName;
+        ImageView artistImage;
     }
 }

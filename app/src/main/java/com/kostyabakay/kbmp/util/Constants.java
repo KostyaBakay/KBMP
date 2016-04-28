@@ -16,4 +16,9 @@ public class Constants {
 
     public static final int NETWORK_PLAYING_TRACK_MODE = 1;
     public static final int LOCAL_PLAYING_TRACK_MODE = 2;
+
+    public static final int ARTIST_IMAGE_SIZE_SMALL = 0;
+    public static final int ARTIST_IMAGE_SIZE_MEDIUM = 1;
+    public static final int ARTIST_IMAGE_SIZE_LARGE = 2;
+    public static final int ARTIST_IMAGE_SIZE_EXTRA_LARGE = 3;
 }
