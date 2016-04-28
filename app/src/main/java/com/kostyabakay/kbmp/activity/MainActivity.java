@@ -16,7 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.kostyabakay.kbmp.R;
@@ -41,6 +40,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Kostya on 09.03.2016.
@@ -258,9 +259,9 @@ public class MainActivity extends AppCompatActivity
                     JSONArray resp = response.json.getJSONArray("response");
                     JSONObject user = resp.getJSONObject(0);
                     String url = user.getString("photo_100");
-                    ImageView imageView = (ImageView) mNavigationView.getHeaderView(0).
+                    CircleImageView circleImageView = (CircleImageView) mNavigationView.getHeaderView(0).
                             findViewById(R.id.user_avatar_navigation_drawer);
-                    ImageLoader.getInstance().displayImage(url, imageView);
+                    ImageLoader.getInstance().displayImage(url, circleImageView);
                 } catch (JSONException e) {
                     Log.d(MainActivity.class.getSimpleName(), "JSON getting trouble");
                 }

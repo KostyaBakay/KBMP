@@ -28,4 +28,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.vk:androidsdk:1.6.7'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
 }
