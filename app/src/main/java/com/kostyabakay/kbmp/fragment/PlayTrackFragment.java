@@ -19,8 +19,8 @@ import com.kostyabakay.kbmp.activity.MainActivity;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Artist;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Image;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
+import com.kostyabakay.kbmp.network.vk.TracksSearcher;
 import com.kostyabakay.kbmp.network.asynctask.DownloadArtistImageAsyncTask;
-import com.kostyabakay.kbmp.network.asynctask.PlayTrackAsyncTask;
 import com.kostyabakay.kbmp.util.AppData;
 import com.kostyabakay.kbmp.util.Constants;
 
@@ -326,8 +326,8 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
      */
     private void playSong(String trackName) {
         if (AppData.sPlayingTrackMode == Constants.NETWORK_PLAYING_TRACK_MODE) {
-            PlayTrackAsyncTask playTrackAsyncTask = new PlayTrackAsyncTask(getActivity());
-            playTrackAsyncTask.execute(trackName);
+            TracksSearcher tracksSearcher = new TracksSearcher(getActivity());
+            tracksSearcher.searchTrack(trackName);
         } else if (AppData.sPlayingTrackMode == Constants.LOCAL_PLAYING_TRACK_MODE) {
             AppData.sAudioPlayer.play(getActivity(), AppData.sCurrentSongPath);
         }

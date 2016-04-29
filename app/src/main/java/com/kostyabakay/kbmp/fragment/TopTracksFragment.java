@@ -19,8 +19,8 @@ import com.kostyabakay.kbmp.activity.AboutArtistActivity;
 import com.kostyabakay.kbmp.activity.MainActivity;
 import com.kostyabakay.kbmp.adapter.PlaylistAdapter;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
+import com.kostyabakay.kbmp.network.vk.TracksSearcher;
 import com.kostyabakay.kbmp.network.asynctask.GetTopTracksAsyncTask;
-import com.kostyabakay.kbmp.network.asynctask.PlayTrackAsyncTask;
 import com.kostyabakay.kbmp.util.AppData;
 import com.kostyabakay.kbmp.util.Constants;
 import com.vk.sdk.VKSdk;
@@ -169,8 +169,8 @@ public class TopTracksFragment extends Fragment {
      */
     private void playTrack() {
         AppData.sPlayingTrackMode = Constants.NETWORK_PLAYING_TRACK_MODE;
-        PlayTrackAsyncTask playTrackAsyncTask = new PlayTrackAsyncTask(getActivity());
-        playTrackAsyncTask.execute(createCurrentSongFullName());
+        TracksSearcher tracksSearcher = new TracksSearcher(getActivity());
+        tracksSearcher.searchTrack(createCurrentSongFullName());
         AppData.isSongPlayed = true;
     }
 
