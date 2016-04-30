@@ -1,17 +1,22 @@
 package com.kostyabakay.kbmp.fragment;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.kostyabakay.kbmp.R;
+import com.kostyabakay.kbmp.activity.AboutArtistActivity;
 import com.kostyabakay.kbmp.activity.MainActivity;
 import com.kostyabakay.kbmp.adapter.PlaylistAdapter;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Artist;
@@ -67,6 +72,7 @@ public class LocalTracksFragment extends Fragment {
      */
     private void setupUI() {
         mListView = (ListView) getActivity().findViewById(R.id.local_tracks_list_view);
+        registerForContextMenu(mListView);
     }
 
     /**
@@ -93,6 +99,28 @@ public class LocalTracksFragment extends Fragment {
                 updateViewPager();
             }
         });
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case R.id.info_about_artist:
+                Track track = mPlaylistAdapter.getItem(info.position);
+                Intent intent = new Intent(getActivity(), AboutArtistActivity.class);
+                intent.putExtra("artist_name", track.getArtist().getName());
+                startActivity(intent);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     /**
