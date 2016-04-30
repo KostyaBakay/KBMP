@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.kostyabakay.kbmp.R;
+import com.kostyabakay.kbmp.network.asynctask.ArtistGetInfoAsyncTask;
+import com.kostyabakay.kbmp.util.AppData;
 
 /**
  * Created by Kostya on 29.04.2016.
@@ -26,10 +28,11 @@ public class AboutArtistActivity extends AppCompatActivity {
         Log.d(AboutArtistActivity.class.getSimpleName(), "onCreate");
         setContentView(R.layout.activity_about_artist);
         setupToolbar();
-        TextView textView = (TextView) findViewById(R.id.about_artist_name);
         Intent intent = getIntent();
-        String artistName = intent.getStringExtra("artist_name");
-        textView.setText(artistName);
+        AppData.artistName = intent.getStringExtra("artist_name");
+
+        new ArtistGetInfoAsyncTask(this, (TextView) findViewById(R.id.about_artist_name),
+                (TextView) findViewById(R.id.about_artist_bio)).execute(AppData.artistName);
     }
 
     private void setupToolbar() {
