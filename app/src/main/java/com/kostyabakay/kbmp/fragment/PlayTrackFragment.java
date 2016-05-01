@@ -19,8 +19,8 @@ import com.kostyabakay.kbmp.activity.MainActivity;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Artist;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Image;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
-import com.kostyabakay.kbmp.network.vk.TracksSearcher;
 import com.kostyabakay.kbmp.network.asynctask.DownloadArtistImageAsyncTask;
+import com.kostyabakay.kbmp.network.vk.TracksSearcher;
 import com.kostyabakay.kbmp.util.AppData;
 import com.kostyabakay.kbmp.util.Constants;
 
@@ -106,7 +106,7 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
                         if (position == 1) {
                             Log.d(PlayTrackFragment.class.getSimpleName(), "onPageSelected");
                             updatePlayTrackFragment();
-                            listenSeekBar();
+                            listenSeekBar(); // Is it necessary? Delete it?
                         }
                     }
 
@@ -117,7 +117,7 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
                 });
     }
 
-    private void listenSeekBar() {
+    public void listenSeekBar() {
         AppData.sAudioPlayer.getMediaPlayer()
                 .setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     public void onPrepared(MediaPlayer mp) {

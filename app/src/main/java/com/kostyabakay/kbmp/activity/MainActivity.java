@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mViewPagerAdapter);
+        AppData.sAudioPlayer.setViewPagerAdapter(mViewPagerAdapter);
     }
 
     private void initImageLoader() {

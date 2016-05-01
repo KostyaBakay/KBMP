@@ -6,6 +6,8 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
 
+import com.kostyabakay.kbmp.adapter.ViewPagerAdapter;
+import com.kostyabakay.kbmp.fragment.PlayTrackFragment;
 import com.kostyabakay.kbmp.util.AppData;
 
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.io.IOException;
  * This class works with audio.
  */
 public class AudioPlayer {
+    private ViewPagerAdapter mViewPagerAdapter;
     private MediaPlayer mMediaPlayer = new MediaPlayer();
 
     /**
@@ -33,6 +36,8 @@ public class AudioPlayer {
                 Uri songUri = Uri.parse(source);
                 mMediaPlayer.setDataSource(context, songUri);
                 mMediaPlayer.prepare(); // Might take long! (for buffering, etc)
+                PlayTrackFragment fragment = (PlayTrackFragment) mViewPagerAdapter.getPlayTrackFragment();
+                fragment.listenSeekBar();
                 AppData.sTrackDuration = mMediaPlayer.getDuration();
                 mMediaPlayer.start();
             }
@@ -77,5 +82,9 @@ public class AudioPlayer {
         }
 
         return mMediaPlayer;
+    }
+
+    public void setViewPagerAdapter(ViewPagerAdapter adapter) {
+        this.mViewPagerAdapter = adapter;
     }
 }
