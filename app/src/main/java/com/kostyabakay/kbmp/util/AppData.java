@@ -20,6 +20,7 @@ public class AppData {
     public static int sSelectedNavigationDrawerItem = 0;
     public static int sPlayingTrackMode = 0;
     public static String artistName;
+    public static String trackName;
 
     public static AppData getInstance() {
         return sAppData;

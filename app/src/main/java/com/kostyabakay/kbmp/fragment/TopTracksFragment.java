@@ -16,11 +16,12 @@ import android.widget.Toast;
 
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.activity.AboutArtistActivity;
+import com.kostyabakay.kbmp.activity.AboutTrackActivity;
 import com.kostyabakay.kbmp.activity.MainActivity;
 import com.kostyabakay.kbmp.adapter.PlaylistAdapter;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
-import com.kostyabakay.kbmp.network.vk.TracksSearcher;
 import com.kostyabakay.kbmp.network.asynctask.GetTopTracksAsyncTask;
+import com.kostyabakay.kbmp.network.vk.TracksSearcher;
 import com.kostyabakay.kbmp.util.AppData;
 import com.kostyabakay.kbmp.util.Constants;
 import com.vk.sdk.VKSdk;
@@ -122,11 +123,20 @@ public class TopTracksFragment extends Fragment {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Track track = null;
+        Intent intent = null;
         switch (item.getItemId()) {
-            case R.id.info_about_artist:
-                Track track = mPlaylistAdapter.getItem(info.position);
-                Intent intent = new Intent(getActivity(), AboutArtistActivity.class);
+            case R.id.context_menu_info_about_artist:
+                track = mPlaylistAdapter.getItem(info.position);
+                intent = new Intent(getActivity(), AboutArtistActivity.class);
                 intent.putExtra("artist_name", track.getArtist().getName());
+                startActivity(intent);
+                return true;
+            case R.id.context_menu_info_about_track:
+                track = mPlaylistAdapter.getItem(info.position);
+                intent = new Intent(getActivity(), AboutTrackActivity.class);
+                intent.putExtra("artist_name", track.getArtist().getName());
+                intent.putExtra("track_name", track.getName());
                 startActivity(intent);
                 return true;
             default:
