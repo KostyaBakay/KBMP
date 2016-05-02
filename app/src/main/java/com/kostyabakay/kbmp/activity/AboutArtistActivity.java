@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kostyabakay.kbmp.R;
@@ -31,8 +32,16 @@ public class AboutArtistActivity extends AppCompatActivity {
         Intent intent = getIntent();
         AppData.artistName = intent.getStringExtra("artist_name");
 
-        new ArtistGetInfoAsyncTask(this, (TextView) findViewById(R.id.about_artist_name),
-                (TextView) findViewById(R.id.about_artist_bio)).execute(AppData.artistName);
+        new ArtistGetInfoAsyncTask(this,
+                (TextView) findViewById(R.id.about_artist_name),
+                (TextView) findViewById(R.id.about_artist_play_count),
+                (TextView) findViewById(R.id.about_artist_listeners),
+                (TextView) findViewById(R.id.about_artist_first_tag),
+                (TextView) findViewById(R.id.about_artist_second_tag),
+                (TextView) findViewById(R.id.about_artist_on_tour),
+                (ImageView) findViewById(R.id.about_artist_image),
+                (TextView) findViewById(R.id.about_artist_bio))
+                .execute(AppData.artistName);
     }
 
     private void setupToolbar() {
