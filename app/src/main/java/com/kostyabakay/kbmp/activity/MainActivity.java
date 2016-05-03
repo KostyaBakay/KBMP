@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kostyabakay.kbmp.R;
@@ -28,11 +29,14 @@ import com.kostyabakay.kbmp.util.AppData;
 import com.kostyabakay.kbmp.util.Constants;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.model.VKApiUser;
+import com.vk.sdk.api.model.VKList;
 import com.vk.sdk.util.VKUtil;
 
 import org.json.JSONArray;
@@ -244,6 +248,7 @@ public class MainActivity extends AppCompatActivity
     private void startVkComponents() {
         getFingerPrints();
         setUserAvatar();
+        setUserName();
         mVkAuthorizationFragment = new VkAuthorizationFragment();
     }
 
@@ -266,6 +271,25 @@ public class MainActivity extends AppCompatActivity
                 } catch (JSONException e) {
                     Log.d(MainActivity.class.getSimpleName(), "JSON getting trouble");
                 }
+            }
+
+            @Override
+            public void onError(VKError error) {
+                super.onError(error);
+            }
+        });
+    }
+
+    private void setUserName() {
+        VKApi.users().get().executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                VKApiUser user = ((VKList<VKApiUser>) response.parsedModel).get(0);
+                Log.d(MainActivity.class.getSimpleName(), user.first_name + " " + user.last_name);
+                TextView tv = (TextView) findViewById(R.id.user_name_surname_navigation_drawer);
+                assert tv != null;
+                String fullName = user.first_name + " " + user.last_name;
+                tv.setText(fullName);
             }
 
             @Override

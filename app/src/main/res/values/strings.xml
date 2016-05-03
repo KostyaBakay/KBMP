@@ -21,7 +21,7 @@
     <string name="summary">Summary</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="dash"> - </string>
+    <string name="dash">\u0020-\u0020</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

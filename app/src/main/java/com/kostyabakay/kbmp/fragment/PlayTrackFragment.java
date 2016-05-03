@@ -20,6 +20,7 @@ import com.kostyabakay.kbmp.model.chart.top.tracks.Artist;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Image;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
 import com.kostyabakay.kbmp.network.asynctask.DownloadArtistImageAsyncTask;
+import com.kostyabakay.kbmp.network.asynctask.DownloadLocalArtistImageAsyncTask;
 import com.kostyabakay.kbmp.network.vk.TracksSearcher;
 import com.kostyabakay.kbmp.util.AppData;
 import com.kostyabakay.kbmp.util.Constants;
@@ -118,14 +119,16 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
     }
 
     public void listenSeekBar() {
-        AppData.sAudioPlayer.getMediaPlayer()
-                .setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    public void onPrepared(MediaPlayer mp) {
-                        mTotalDuration = mp.getDuration();
-                        mTimelineSeekBar.setMax(mTotalDuration);
-                        mHandler.postDelayed(runnable, 100);
-                    }
-                });
+        if (AppData.sAudioPlayer.getMediaPlayer() != null) {
+            AppData.sAudioPlayer.getMediaPlayer()
+                    .setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        public void onPrepared(MediaPlayer mp) {
+                            mTotalDuration = mp.getDuration();
+                            mTimelineSeekBar.setMax(mTotalDuration);
+                            mHandler.postDelayed(runnable, 100);
+                        }
+                    });
+        }
     }
 
     /**
@@ -337,7 +340,9 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
      * Updates PlayTrackFragment with information about current track.
      */
     public void updatePlayTrackFragment() {
-        if (AppData.sPlayingTrackMode == Constants.LOCAL_PLAYING_TRACK_MODE) {
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if (AppData.sPlayingTrackMode == Constants.LOCAL_PLAYING_TRACK_MODE
+                && !mainActivity.isNetworkConnected()) {
             clearPlayTrackFragment();
         }
 
@@ -383,6 +388,10 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
             new DownloadArtistImageAsyncTask((ImageView) getActivity()
                     .findViewById(R.id.play_track_artist_image_view))
                     .execute(image.getText());
+        } else if (AppData.sPlayingTrackMode == Constants.LOCAL_PLAYING_TRACK_MODE) {
+            new DownloadLocalArtistImageAsyncTask((MainActivity) getActivity(),
+                    (ImageView) getActivity().findViewById(R.id.play_track_artist_image_view))
+                    .execute(track.getArtist().getName());
         }
     }
 
@@ -413,8 +422,10 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
         updateTrackCurrentTime(progress);
         updateTrackDuration();
 
-        if (fromUser) {
-            AppData.sAudioPlayer.getMediaPlayer().seekTo(progress);
+        if (AppData.sAudioPlayer.getMediaPlayer() != null) {
+            if (fromUser) {
+                AppData.sAudioPlayer.getMediaPlayer().seekTo(progress);
+            }
         }
 
     }

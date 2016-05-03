@@ -14,10 +14,10 @@ import java.io.InputStream;
  * in ImageView.
  */
 public class DownloadArtistImageAsyncTask extends AsyncTask<String, Void, Bitmap> {
-    private ImageView mImageView;
+    private ImageView mArtistImageView;
 
     public DownloadArtistImageAsyncTask(ImageView imageView) {
-        this.mImageView = imageView;
+        this.mArtistImageView = imageView;
     }
 
     protected Bitmap doInBackground(String... urls) {
@@ -36,6 +36,6 @@ public class DownloadArtistImageAsyncTask extends AsyncTask<String, Void, Bitmap
     }
 
     protected void onPostExecute(Bitmap result) {
-        mImageView.setImageBitmap(result);
+        mArtistImageView.setImageBitmap(result);
     }
 }
