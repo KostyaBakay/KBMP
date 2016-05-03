@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.model.artist.info.ArtistInfo;
 import com.kostyabakay.kbmp.model.artist.info.ArtistResponse;
-import com.kostyabakay.kbmp.model.artist.info.Bio;
 import com.kostyabakay.kbmp.model.artist.info.Image;
 import com.kostyabakay.kbmp.model.artist.info.Tag;
 import com.kostyabakay.kbmp.model.artist.info.Tags;
@@ -40,11 +39,13 @@ public class ArtistGetInfoAsyncTask extends AsyncTask<String, Void, ArtistInfo> 
     private TextView mFirstTag;
     private TextView mSecondTag;
     private TextView mOnTour;
+    private TextView mBioHeadline;
     private TextView mBio;
 
     public ArtistGetInfoAsyncTask(Activity activity, TextView artistName, TextView playCount,
                                   TextView listeners, TextView firstTag, TextView secondTag,
-                                  TextView onTour, ImageView artistImage, TextView bio) {
+                                  TextView onTour, ImageView artistImage, TextView bioHeadline,
+                                  TextView bio) {
         this.mActivity = activity;
         this.mArtistName = artistName;
         this.mPlayCount = playCount;
@@ -53,6 +54,7 @@ public class ArtistGetInfoAsyncTask extends AsyncTask<String, Void, ArtistInfo> 
         this.mSecondTag = secondTag;
         this.mOnTour = onTour;
         this.mArtistImage = artistImage;
+        this.mBioHeadline = bioHeadline;
         this.mBio = bio;
     }
 
@@ -130,8 +132,13 @@ public class ArtistGetInfoAsyncTask extends AsyncTask<String, Void, ArtistInfo> 
         }
 
         mArtistImage.setImageBitmap(mArtistImageBitmap);
-        Bio bio = artistInfo.getBio();
-        mBio.setText(bio.getContent());
+
+        // Biography
+        if (!artistInfo.getBio().getContent().equals("")) {
+            mBioHeadline.setText(R.string.biography);
+            mBio.setText(artistInfo.getBio().getContent());
+        }
+
         mProgressDialog.dismiss();
     }
 }

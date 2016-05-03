@@ -456,7 +456,11 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
         int trackDurationSeconds = AppData.sTrackDuration / 1000;
         int trackDurationMinutes = trackDurationSeconds / 60;
         trackDurationSeconds = trackDurationSeconds - trackDurationMinutes * 60;
+        String trackDurationSecondsString = String.valueOf(trackDurationSeconds);
+        if (trackDurationSeconds < 10) {
+            trackDurationSecondsString = "0" + String.valueOf(trackDurationSeconds);
+        }
         mSongDurationTextView.setText(String.valueOf(trackDurationMinutes +
-                ":" + trackDurationSeconds));
+                ":" + trackDurationSecondsString));
     }
 }

@@ -29,6 +29,7 @@ import com.kostyabakay.kbmp.util.AppData;
 import com.kostyabakay.kbmp.util.Constants;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
@@ -252,7 +253,7 @@ public class MainActivity extends AppCompatActivity
         mVkAuthorizationFragment = new VkAuthorizationFragment();
     }
 
-    private void setUserAvatar() {
+    public void setUserAvatar() {
         VKParameters params = new VKParameters();
         params.put(VKApiConst.FIELDS, "photo_100");
         VKRequest request = new VKRequest("users.get", params);
@@ -280,23 +281,25 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setUserName() {
-        VKApi.users().get().executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                VKApiUser user = ((VKList<VKApiUser>) response.parsedModel).get(0);
-                Log.d(MainActivity.class.getSimpleName(), user.first_name + " " + user.last_name);
-                TextView tv = (TextView) findViewById(R.id.user_name_surname_navigation_drawer);
-                assert tv != null;
-                String fullName = user.first_name + " " + user.last_name;
-                tv.setText(fullName);
-            }
+    public void setUserName() {
+        if (VKSdk.isLoggedIn()) {
+            VKApi.users().get().executeWithListener(new VKRequest.VKRequestListener() {
+                @Override
+                public void onComplete(VKResponse response) {
+                    VKApiUser user = ((VKList<VKApiUser>) response.parsedModel).get(0);
+                    Log.d(MainActivity.class.getSimpleName(), user.first_name + " " + user.last_name);
+                    TextView tv = (TextView) findViewById(R.id.user_name_surname_navigation_drawer);
+                    assert tv != null;
+                    String fullName = user.first_name + " " + user.last_name;
+                    tv.setText(fullName);
+                }
 
-            @Override
-            public void onError(VKError error) {
-                super.onError(error);
-            }
-        });
+                @Override
+                public void onError(VKError error) {
+                    super.onError(error);
+                }
+            });
+        }
     }
 
     private void getFingerPrints() {

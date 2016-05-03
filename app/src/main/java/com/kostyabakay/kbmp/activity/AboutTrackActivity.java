@@ -37,8 +37,10 @@ public class AboutTrackActivity extends AppCompatActivity {
                 (TextView) findViewById(R.id.about_track_name),
                 (TextView) findViewById(R.id.about_track_play_count),
                 (TextView) findViewById(R.id.about_track_listeners),
+                (TextView) findViewById(R.id.about_track_tag_headline),
                 (TextView) findViewById(R.id.about_track_first_tag),
                 (TextView) findViewById(R.id.about_track_second_tag),
+                (TextView) findViewById(R.id.about_track_summary_headline),
                 (TextView) findViewById(R.id.about_track_summary))
                 .execute(AppData.artistName, AppData.trackName);
     }

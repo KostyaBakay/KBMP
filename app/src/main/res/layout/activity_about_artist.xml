@@ -124,10 +124,10 @@
                 android:gravity="center" />
 
             <TextView
+                android:id="@+id/about_artist_bio_headline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/biography"
                 android:textColor="@color/primary_text"
                 android:textSize="20sp" />
 

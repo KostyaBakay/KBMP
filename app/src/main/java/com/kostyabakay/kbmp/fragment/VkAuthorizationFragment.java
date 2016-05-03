@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kostyabakay.kbmp.R;
+import com.kostyabakay.kbmp.activity.MainActivity;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
@@ -50,6 +51,9 @@ public class VkAuthorizationFragment extends Fragment {
             public void onResult(VKAccessToken res) {
                 Log.d(VkAuthorizationFragment.class.getSimpleName(),
                         "onResult: User successfully logged");
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.setUserAvatar();
+                mainActivity.setUserName();
             }
 
             @Override

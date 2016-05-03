@@ -40,6 +40,7 @@ public class AboutArtistActivity extends AppCompatActivity {
                 (TextView) findViewById(R.id.about_artist_second_tag),
                 (TextView) findViewById(R.id.about_artist_on_tour),
                 (ImageView) findViewById(R.id.about_artist_image),
+                (TextView) findViewById(R.id.about_artist_bio_headline),
                 (TextView) findViewById(R.id.about_artist_bio))
                 .execute(AppData.artistName);
     }

@@ -36,12 +36,14 @@
                     android:id="@+id/about_track_artist"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:maxLines="1"
                     android:textColor="@color/primary_text"
                     android:textSize="20sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:maxLines="1"
                     android:text="@string/dash"
                     android:textColor="@color/primary_text"
                     android:textSize="20sp" />
@@ -50,6 +52,7 @@
                     android:id="@+id/about_track_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:maxLines="1"
                     android:textColor="@color/primary_text"
                     android:textSize="20sp" />
             </LinearLayout>
@@ -98,9 +101,9 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/about_track_tag_headline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/tags"
                     android:textColor="@color/primary_text" />
 
                 <TextView
@@ -119,10 +122,10 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/about_track_summary_headline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/summary"
                 android:textColor="@color/primary_text"
                 android:textSize="20sp" />
 
