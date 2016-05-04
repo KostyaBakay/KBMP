@@ -9,6 +9,7 @@ import android.util.Log;
 import com.kostyabakay.kbmp.adapter.ViewPagerAdapter;
 import com.kostyabakay.kbmp.fragment.PlayTrackFragment;
 import com.kostyabakay.kbmp.util.AppData;
+import com.kostyabakay.kbmp.util.Constants;
 
 import java.io.IOException;
 
@@ -35,11 +36,18 @@ public class AudioPlayer {
             if (source != null) {
                 Uri songUri = Uri.parse(source);
                 mMediaPlayer.setDataSource(context, songUri);
-                mMediaPlayer.prepare(); // Might take long! (for buffering, etc)
-                PlayTrackFragment fragment = (PlayTrackFragment) mViewPagerAdapter.getPlayTrackFragment();
-                fragment.listenSeekBar();
-                AppData.sTrackDuration = mMediaPlayer.getDuration();
-                mMediaPlayer.start();
+                if (AppData.sPlayingTrackMode == Constants.LOCAL_PLAYING_TRACK_MODE) {
+                    mMediaPlayer.prepare(); // Might take long! (for buffering, etc)
+                    PlayTrackFragment mPlayTrackFragment
+                            = (PlayTrackFragment) mViewPagerAdapter.getPlayTrackFragment();
+                    mPlayTrackFragment.listenSeekBar();
+                    AppData.sTrackDuration = mMediaPlayer.getDuration();
+                    mMediaPlayer.start();
+                } else if (AppData.sPlayingTrackMode == Constants.NETWORK_PLAYING_TRACK_MODE) {
+                    PlayTrackFragment mPlayTrackFragment
+                            = (PlayTrackFragment) mViewPagerAdapter.getPlayTrackFragment();
+                    mPlayTrackFragment.listenSeekBar();
+                }
             }
         } catch (IOException e) {
             Log.e(AudioPlayer.class.getSimpleName(), "IOException of MediaPlayer");

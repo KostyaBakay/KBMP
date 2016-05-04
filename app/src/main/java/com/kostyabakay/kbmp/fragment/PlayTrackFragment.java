@@ -107,7 +107,6 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
                         if (position == 1) {
                             Log.d(PlayTrackFragment.class.getSimpleName(), "onPageSelected");
                             updatePlayTrackFragment();
-                            listenSeekBar(); // Is it necessary? Delete it?
                         }
                     }
 
@@ -119,16 +118,26 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
     }
 
     public void listenSeekBar() {
-        if (AppData.sAudioPlayer.getMediaPlayer() != null) {
-            AppData.sAudioPlayer.getMediaPlayer()
-                    .setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        public void onPrepared(MediaPlayer mp) {
-                            mTotalDuration = mp.getDuration();
-                            mTimelineSeekBar.setMax(mTotalDuration);
-                            mHandler.postDelayed(runnable, 100);
-                        }
-                    });
+        if (AppData.sPlayingTrackMode == Constants.NETWORK_PLAYING_TRACK_MODE) {
+            // TODO: Implement this in another class [1].
+            // I used it here, because I need OnPreparedListener for async playing track.
+            AppData.sAudioPlayer.getMediaPlayer().prepareAsync();
         }
+
+        AppData.sAudioPlayer.getMediaPlayer()
+                .setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    public void onPrepared(MediaPlayer mp) {
+                        if (AppData.sPlayingTrackMode == Constants.NETWORK_PLAYING_TRACK_MODE) {
+                            // TODO: Implement this in another class [2].
+                            AppData.sTrackDuration = mp.getDuration();
+                            mp.start();
+                        }
+
+                        mTotalDuration = mp.getDuration();
+                        mTimelineSeekBar.setMax(mTotalDuration);
+                        mHandler.postDelayed(runnable, 100);
+                    }
+                });
     }
 
     /**
