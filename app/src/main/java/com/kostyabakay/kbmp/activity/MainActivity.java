@@ -197,18 +197,28 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_vk_authorization) {
             if (isNetworkConnected()) {
-                ft.replace(R.id.container, mVkAuthorizationFragment);
+                AppData.sSelectedNavigationDrawerItem = Constants.VK_LOG_IN;
+                if (!VKSdk.isLoggedIn()) {
+                    ft.replace(R.id.container, mVkAuthorizationFragment);
+                } else {
+                    Toast.makeText(this, R.string.you_are_logged, Toast.LENGTH_LONG).show();
+                }
             } else {
                 Toast.makeText(this,
                         R.string.please_check_internet_connection, Toast.LENGTH_LONG).show();
             }
         } else if (id == R.id.nav_last_fm_top_tracks) {
             if (isNetworkConnected()) {
-                AppData.sSelectedNavigationDrawerItem = Constants.LAST_FM_TOP_TRACKS;
-                mViewPager.setCurrentItem(0);
-                ft.replace(R.id.fragment_basic_first_item_of_view_pager, new TopTracksFragment());
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                ft.addToBackStack(null);
+                if (VKSdk.isLoggedIn()) {
+                    AppData.sSelectedNavigationDrawerItem = Constants.LAST_FM_TOP_TRACKS;
+                    mViewPager.setCurrentItem(0);
+                    ft.replace(R.id.fragment_basic_first_item_of_view_pager,
+                            new TopTracksFragment());
+                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    ft.addToBackStack(null);
+                } else {
+                    Toast.makeText(this, R.string.please_log_in_to_vk, Toast.LENGTH_SHORT).show();
+                }
             } else {
                 Toast.makeText(this,
                         R.string.please_check_internet_connection, Toast.LENGTH_LONG).show();

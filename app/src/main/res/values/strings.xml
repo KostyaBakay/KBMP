@@ -28,5 +28,6 @@
 
     <string name="please_log_in_to_vk">Please log in to vk.com!</string>
     <string name="please_check_internet_connection">Please check your Internet connection!</string>
+    <string name="you_are_logged">You are logged!</string>
     <string name="action_settings">Settings</string>
 </resources>

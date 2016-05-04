@@ -50,21 +50,7 @@ public class TopTracksFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TopTracksFragment.class.getSimpleName(), "onCreateView");
-        View view = inflater.inflate(R.layout.fragment_top_tracks, container, false);
-        MainActivity activity = (MainActivity) getActivity();
-        if (activity.isNetworkConnected()) {
-            if (!VKSdk.isLoggedIn()) {
-                Toast.makeText(getActivity(),
-                        R.string.please_log_in_to_vk, Toast.LENGTH_SHORT).show();
-                return inflater.inflate(R.layout.fragment_starting, container, false);
-            } else {
-                return view;
-            }
-        } else {
-            Toast.makeText(getActivity(),
-                    R.string.please_check_internet_connection, Toast.LENGTH_LONG).show();
-            return inflater.inflate(R.layout.fragment_starting, container, false);
-        }
+        return inflater.inflate(R.layout.fragment_top_tracks, container, false);
     }
 
     @Override

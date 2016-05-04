@@ -1,20 +1,17 @@
 package com.kostyabakay.kbmp.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.activity.MainActivity;
-import com.vk.sdk.VKAccessToken;
-import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
-import com.vk.sdk.api.VKError;
 
 /**
  * Created by Kostya on 20.03.2016.
@@ -36,33 +33,16 @@ public class VkAuthorizationFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
+    public void onResume() {
         super.onStart();
-        Log.d(VkAuthorizationFragment.class.getSimpleName(), "onStart");
-        VKSdk.login(getActivity(), scope);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(VkAuthorizationFragment.class.getSimpleName(), "onActivityResult");
-        if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
-
-            @Override
-            public void onResult(VKAccessToken res) {
-                Log.d(VkAuthorizationFragment.class.getSimpleName(),
-                        "onResult: User successfully logged");
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.setUserAvatar();
-                mainActivity.setUserName();
-            }
-
-            @Override
-            public void onError(VKError error) {
-                Log.d(VkAuthorizationFragment.class.getSimpleName(),
-                        "onResult: An authorization error");
-            }
-        })) {
-            super.onActivityResult(requestCode, resultCode, data);
+        Log.d(VkAuthorizationFragment.class.getSimpleName(), "onResume");
+        if (!VKSdk.isLoggedIn()) {
+            VKSdk.login(getActivity(), scope);
+        } else {
+            Toast.makeText(getActivity(), R.string.you_are_logged, Toast.LENGTH_LONG).show();
+            MainActivity mainActivity = (MainActivity) getActivity();
+            mainActivity.setUserAvatar();
+            mainActivity.setUserName();
         }
     }
 }

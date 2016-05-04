@@ -21,6 +21,4 @@ public class Constants {
     public static final int ARTIST_IMAGE_SIZE_MEDIUM = 1;
     public static final int ARTIST_IMAGE_SIZE_LARGE = 2;
     public static final int ARTIST_IMAGE_SIZE_EXTRA_LARGE = 3;
-
-    //public static final String ARTIST_NAME = "Rihanna";
 }
