@@ -18,7 +18,7 @@ public class AppData {
     public static String sNextSongPath;
     public static String sSongUrl;
     public static int sSelectedNavigationDrawerItem = 0;
-    public static int sPlayingTrackMode = 0;
+    public static int sPlayingTrackMode = Constants.NOT_ACTIVE_PLAYING_TRACK_MODE;
     public static String artistName;
     public static String trackName;
 

@@ -14,6 +14,7 @@ public class Constants {
     public static final int LAST_FM_TOP_TRACKS = 2;
     public static final int USER_LOCAL_TRACKS = 3;
 
+    public static final int NOT_ACTIVE_PLAYING_TRACK_MODE = 0;
     public static final int NETWORK_PLAYING_TRACK_MODE = 1;
     public static final int LOCAL_PLAYING_TRACK_MODE = 2;
 

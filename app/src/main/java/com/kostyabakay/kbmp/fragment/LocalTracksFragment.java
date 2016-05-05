@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.activity.AboutArtistActivity;
@@ -114,22 +115,29 @@ public class LocalTracksFragment extends Fragment {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         Track track = null;
         Intent intent = null;
-        switch (item.getItemId()) {
-            case R.id.context_menu_info_about_artist:
-                track = mPlaylistAdapter.getItem(info.position);
-                intent = new Intent(getActivity(), AboutArtistActivity.class);
-                intent.putExtra("artist_name", track.getArtist().getName());
-                startActivity(intent);
-                return true;
-            case R.id.context_menu_info_about_track:
-                track = mPlaylistAdapter.getItem(info.position);
-                intent = new Intent(getActivity(), AboutTrackActivity.class);
-                intent.putExtra("artist_name", track.getArtist().getName());
-                intent.putExtra("track_name", track.getName());
-                startActivity(intent);
-                return true;
-            default:
-                return super.onContextItemSelected(item);
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity.isNetworkConnected()) {
+            switch (item.getItemId()) {
+                case R.id.context_menu_info_about_artist:
+                    track = mPlaylistAdapter.getItem(info.position);
+                    intent = new Intent(getActivity(), AboutArtistActivity.class);
+                    intent.putExtra("artist_name", track.getArtist().getName());
+                    startActivity(intent);
+                    return true;
+                case R.id.context_menu_info_about_track:
+                    track = mPlaylistAdapter.getItem(info.position);
+                    intent = new Intent(getActivity(), AboutTrackActivity.class);
+                    intent.putExtra("artist_name", track.getArtist().getName());
+                    intent.putExtra("track_name", track.getName());
+                    startActivity(intent);
+                    return true;
+                default:
+                    return super.onContextItemSelected(item);
+            }
+        } else {
+            Toast.makeText(getActivity(),
+                    R.string.please_check_internet_connection, Toast.LENGTH_LONG).show();
+            return false;
         }
     }
 

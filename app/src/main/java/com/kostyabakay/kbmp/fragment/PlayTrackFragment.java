@@ -184,19 +184,23 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
         mSkipPreviousSongImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (AppData.sAudioPlayer.getMediaPlayer() != null) {
-                    getCurrentTrack();
-                    changePreviousTrackToCurrent();
-                    updateViewPagerAdapter(mPreviousTrack, mCurrentTrackPosition);
-                    updateArtistImage(mPreviousTrack);
-                    AppData.sCurrentSongPath = AppData.sPreviousSongPath;
-                    playSong(createPreviousSongFullName());
-                    updatePlayTrackFragment();
-                } else {
-                    Toast.makeText(getActivity(), "Please choose song!", Toast.LENGTH_SHORT).show();
-                }
+                previousSong();
             }
         });
+    }
+
+    public void previousSong() {
+        if (AppData.sPlayingTrackMode == Constants.NOT_ACTIVE_PLAYING_TRACK_MODE) {
+            Toast.makeText(getActivity(), "Please choose song!", Toast.LENGTH_SHORT).show();
+        } else {
+            getCurrentTrack();
+            changePreviousTrackToCurrent();
+            updateViewPagerAdapter(mPreviousTrack, mCurrentTrackPosition);
+            updateArtistImage(mPreviousTrack);
+            AppData.sCurrentSongPath = AppData.sPreviousSongPath;
+            playSong(createPreviousSongFullName());
+            updatePlayTrackFragment();
+        }
     }
 
     /**
@@ -206,7 +210,9 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
         mPlaySongImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (AppData.sAudioPlayer.getMediaPlayer() != null) {
+                if (AppData.sPlayingTrackMode == Constants.NOT_ACTIVE_PLAYING_TRACK_MODE) {
+                    Toast.makeText(getActivity(), "Please choose song!", Toast.LENGTH_SHORT).show();
+                } else {
                     if (!AppData.isSongPlayed) {
                         mPlaySongImageView.setImageResource(R.mipmap.ic_pause);
                         AppData.sAudioPlayer.resume();
@@ -216,8 +222,6 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
                         AppData.sAudioPlayer.pause();
                         AppData.isSongPlayed = false;
                     }
-                } else {
-                    Toast.makeText(getActivity(), "Please choose song!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -230,19 +234,23 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
         mSkipNextSongImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (AppData.sAudioPlayer.getMediaPlayer() != null) {
-                    getCurrentTrack();
-                    changeNextTrackToCurrent();
-                    updateViewPagerAdapter(mNextTrack, mCurrentTrackPosition);
-                    updateArtistImage(mNextTrack);
-                    AppData.sCurrentSongPath = AppData.sNextSongPath;
-                    playSong(createNextSongFullName());
-                    updatePlayTrackFragment();
-                } else {
-                    Toast.makeText(getActivity(), "Please choose song!", Toast.LENGTH_SHORT).show();
-                }
+                nextSong();
             }
         });
+    }
+
+    public void nextSong() {
+        if (AppData.sPlayingTrackMode == Constants.NOT_ACTIVE_PLAYING_TRACK_MODE) {
+            Toast.makeText(getActivity(), "Please choose song!", Toast.LENGTH_SHORT).show();
+        } else {
+            getCurrentTrack();
+            changeNextTrackToCurrent();
+            updateViewPagerAdapter(mNextTrack, mCurrentTrackPosition);
+            updateArtistImage(mNextTrack);
+            AppData.sCurrentSongPath = AppData.sNextSongPath;
+            playSong(createNextSongFullName());
+            updatePlayTrackFragment();
+        }
     }
 
     /**

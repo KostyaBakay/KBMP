@@ -55,7 +55,9 @@ public class AudioPlayer {
 
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             public void onCompletion(MediaPlayer mp) {
-                stop();
+                PlayTrackFragment fragment
+                        = (PlayTrackFragment) mViewPagerAdapter.getPlayTrackFragment();
+                fragment.nextSong();
             }
         });
     }
