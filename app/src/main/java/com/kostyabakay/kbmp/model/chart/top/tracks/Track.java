@@ -1,15 +1,18 @@
 package com.kostyabakay.kbmp.model.chart.top.tracks;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Kostya on 14.03.2016.
  */
-public class Track {
+public class Track implements Parcelable {
 
     @SerializedName("name")
     @Expose
@@ -38,6 +41,45 @@ public class Track {
     @SerializedName("image")
     @Expose
     private List<Image> image = new ArrayList<Image>();
+
+    public Track() {
+    }
+
+    protected Track(Parcel in) {
+        name = in.readString();
+        duration = in.readString();
+        playcount = in.readString();
+        listeners = in.readString();
+        mbid = in.readString();
+        url = in.readString();
+    }
+
+    public static final Creator<Track> CREATOR = new Creator<Track>() {
+        @Override
+        public Track createFromParcel(Parcel in) {
+            return new Track(in);
+        }
+
+        @Override
+        public Track[] newArray(int size) {
+            return new Track[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(duration);
+        dest.writeString(playcount);
+        dest.writeString(listeners);
+        dest.writeString(mbid);
+        dest.writeString(url);
+    }
 
     /**
      * @return The name

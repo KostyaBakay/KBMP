@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.kostyabakay.kbmp.activity.MainActivity;
+import com.kostyabakay.kbmp.util.AppData;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
@@ -30,7 +32,12 @@ public class Application extends android.app.Application {
     public void onCreate() {
         super.onCreate();
         Log.d(android.app.Application.class.getSimpleName(), "onCreate");
+        initImageLoader();
         vkAccessTokenTracker.startTracking();
         VKSdk.initialize(this);
+    }
+
+    private void initImageLoader() {
+        ImageLoader.getInstance().init(AppData.getImageLoaderConfig(getApplicationContext()));
     }
 }

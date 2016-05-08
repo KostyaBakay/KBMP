@@ -134,8 +134,8 @@ public class PlayTrackFragment extends Fragment implements SeekBar.OnSeekBarChan
                         }
 
                         mTotalDuration = mp.getDuration();
-                        mTimelineSeekBar.setMax(mTotalDuration);
-                        mHandler.postDelayed(runnable, 100);
+                        if (mTimelineSeekBar != null) mTimelineSeekBar.setMax(mTotalDuration);
+                        if (mHandler != null) mHandler.postDelayed(runnable, 100);
                     }
                 });
     }

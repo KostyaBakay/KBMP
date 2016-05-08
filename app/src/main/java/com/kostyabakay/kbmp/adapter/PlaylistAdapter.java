@@ -14,7 +14,6 @@ import com.kostyabakay.kbmp.model.chart.top.tracks.Image;
 import com.kostyabakay.kbmp.model.chart.top.tracks.Track;
 import com.kostyabakay.kbmp.util.Constants;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +24,14 @@ import java.util.List;
  */
 public class PlaylistAdapter extends ArrayAdapter<Track> {
     private Context mContext;
+    private ImageLoader mImageLoader;
     private ArrayList<Track> mTracks;
 
     public PlaylistAdapter(Context context, ArrayList<Track> tracks) {
         super(context, R.layout.playlist_item);
         this.mContext = context;
         this.mTracks = tracks;
+        mImageLoader = ImageLoader.getInstance();
     }
 
     @Override
@@ -53,8 +54,6 @@ public class PlaylistAdapter extends ArrayAdapter<Track> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
-        ImageLoader imageLoader = ImageLoader.getInstance();
-        imageLoader.init(ImageLoaderConfiguration.createDefault(mContext));
         if (convertView == null) {
             LayoutInflater inflater =
                     (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -83,11 +82,11 @@ public class PlaylistAdapter extends ArrayAdapter<Track> {
         List<Image> images = viewHolder.track.getImage();
 
         try {
-            ImageLoader.getInstance()
-                    .displayImage(images.get(Constants.ARTIST_IMAGE_SIZE_EXTRA_LARGE)
-                            .getText(), viewHolder.artistImage);
+            mImageLoader.displayImage(images.get(Constants.ARTIST_IMAGE_SIZE_EXTRA_LARGE)
+                    .getText(), viewHolder.artistImage);
         } catch (IndexOutOfBoundsException e) {
-            viewHolder.artistImage.setImageResource(R.drawable.last_fm_logo);
+            // This exception appears, when user choose local tracks and they are don't have
+            // an array with the links of artist images.
         }
 
         return convertView;

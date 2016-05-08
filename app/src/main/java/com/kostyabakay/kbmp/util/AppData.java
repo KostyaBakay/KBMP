@@ -1,6 +1,14 @@
 package com.kostyabakay.kbmp.util;
 
+import android.content.Context;
+
+import com.kostyabakay.kbmp.R;
 import com.kostyabakay.kbmp.audio.AudioPlayer;
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.utils.L;
+import com.nostra13.universalimageloader.utils.StorageUtils;
 
 /**
  * Created by Kostya on 31.03.2016.
@@ -28,5 +36,24 @@ public class AppData {
 
     public AppData() {
         sAppData = this;
+    }
+
+    public static ImageLoaderConfiguration getImageLoaderConfig(Context context) {
+        L.writeLogs(false);
+        return new ImageLoaderConfiguration.Builder(context)
+                .threadPoolSize(3)
+                .threadPriority(Thread.MIN_PRIORITY + 2)
+                .writeDebugLogs()
+                .defaultDisplayImageOptions(getDefaultImageOption())
+                .diskCache(new UnlimitedDiskCache(StorageUtils.getCacheDirectory(context, true)))
+                .build();
+    }
+
+    private static DisplayImageOptions getDefaultImageOption() {
+        return new DisplayImageOptions.Builder()
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .showImageOnLoading(R.drawable.last_fm_logo)
+                .build();
     }
 }

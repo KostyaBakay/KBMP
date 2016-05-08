@@ -28,7 +28,6 @@ import com.kostyabakay.kbmp.network.asynctask.GetJournalAsyncTask;
 import com.kostyabakay.kbmp.util.AppData;
 import com.kostyabakay.kbmp.util.Constants;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
@@ -66,7 +65,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         Log.d(MainActivity.class.getSimpleName(), "onCreate");
         setupUI();
-        initImageLoader();
         startVkComponents();
         listenViewPager();
 
@@ -121,11 +119,6 @@ public class MainActivity extends AppCompatActivity
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mViewPagerAdapter);
         AppData.sAudioPlayer.setViewPagerAdapter(mViewPagerAdapter);
-    }
-
-    private void initImageLoader() {
-        ImageLoader imageLoader = ImageLoader.getInstance();
-        imageLoader.init(ImageLoaderConfiguration.createDefault(getApplicationContext()));
     }
 
     /**
@@ -213,9 +206,9 @@ public class MainActivity extends AppCompatActivity
                     AppData.sSelectedNavigationDrawerItem = Constants.LAST_FM_TOP_TRACKS;
                     mViewPager.setCurrentItem(0);
                     ft.replace(R.id.fragment_basic_first_item_of_view_pager,
-                            new TopTracksFragment());
+                            new TopTracksFragment(), TopTracksFragment.TAG);
                     ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                    ft.addToBackStack(null);
+                    ft.addToBackStack(TopTracksFragment.TAG);
                 } else {
                     Toast.makeText(this, R.string.please_log_in_to_vk, Toast.LENGTH_SHORT).show();
                 }
@@ -226,9 +219,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_local_tracks) {
             AppData.sSelectedNavigationDrawerItem = Constants.USER_LOCAL_TRACKS;
             mViewPager.setCurrentItem(0);
-            ft.replace(R.id.fragment_basic_first_item_of_view_pager, new LocalTracksFragment());
+            ft.replace(R.id.fragment_basic_first_item_of_view_pager,
+                    new LocalTracksFragment(), LocalTracksFragment.TAG);
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            ft.addToBackStack(null);
+            ft.addToBackStack(LocalTracksFragment.TAG);
         } else if (id == R.id.nav_developer) {
             showLinkedInAccount();
         }

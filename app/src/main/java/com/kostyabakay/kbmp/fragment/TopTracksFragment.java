@@ -2,6 +2,7 @@ package com.kostyabakay.kbmp.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
  * This class represents the list of different music tracks.
  */
 public class TopTracksFragment extends Fragment {
+    public static final String TAG = "TopTracksFragment";
     private PlaylistAdapter mPlaylistAdapter;
     private ListView mListView;
     private ArrayList<Track> mTracks = new ArrayList<>();
@@ -44,6 +46,15 @@ public class TopTracksFragment extends Fragment {
         Bundle bundle = new Bundle();
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TopTracksFragment.class.getSimpleName(), "onCreate");
+        if (savedInstanceState != null) {
+            mTracks = savedInstanceState.getParcelableArrayList("tracks");
+        }
     }
 
     @Override
@@ -67,12 +78,6 @@ public class TopTracksFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        mTracks.clear();
-    }
-
     /**
      * Initialization of view elements.
      */
@@ -82,21 +87,36 @@ public class TopTracksFragment extends Fragment {
     }
 
     /**
-     * Gets top tracks from last.fm with chart.getTopTracks API method.
-     */
-    private void getTopTracks() {
-        GetTopTracksAsyncTask getTopTracksAsyncTask = new GetTopTracksAsyncTask(getActivity(),
-                mTracks, mPlaylistAdapter);
-        getTopTracksAsyncTask.execute();
-    }
-
-    /**
      * Sets ArrayList of top tracks to ListView using PlaylistAdapter.
      */
     private void setTopTracksToListView() {
         mPlaylistAdapter = new PlaylistAdapter(getActivity(), mTracks);
         ((MainActivity) getActivity()).getViewPagerAdapter().setTracks(mTracks);
         mListView.setAdapter(mPlaylistAdapter);
+    }
+
+    /**
+     * Gets top tracks from last.fm with chart.getTopTracks API method.
+     */
+    private void getTopTracks() {
+        if (mTracks != null && !mTracks.isEmpty()) {
+            mPlaylistAdapter = new PlaylistAdapter(getActivity(), mTracks);
+            ((MainActivity) getActivity()).getViewPagerAdapter().setTracks(mTracks);
+            mListView.setAdapter(mPlaylistAdapter);
+        } else {
+            GetTopTracksAsyncTask getTopTracksAsyncTask = new GetTopTracksAsyncTask(getActivity(),
+                    mTracks, mPlaylistAdapter);
+            getTopTracksAsyncTask.execute();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TopTracksFragment.class.getSimpleName(), "onSaveInstanceState");
+        if (mTracks != null) {
+            outState.putParcelableArrayList("tracks", mTracks);
+        }
     }
 
     @Override
@@ -200,6 +220,7 @@ public class TopTracksFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         Log.d(TopTracksFragment.class.getSimpleName(), "onDestroy");
+        mTracks.clear();
         AppData.sAudioPlayer.stop();
     }
 }

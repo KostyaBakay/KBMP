@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -35,6 +36,7 @@ import java.util.Arrays;
  * This class represents the list of the user's local audio files.
  */
 public class LocalTracksFragment extends Fragment {
+    public static final String TAG = "LocalTracksFragment";
     private PlaylistAdapter mPlaylistAdapter;
     private ListView mListView;
     private ArrayList<Track> mTracks = new ArrayList<>();
@@ -45,6 +47,15 @@ public class LocalTracksFragment extends Fragment {
         Bundle bundle = new Bundle();
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(LocalTracksFragment.class.getSimpleName(), "onCreate");
+        if (savedInstanceState != null) {
+            mTracks = savedInstanceState.getParcelableArrayList("tracks");
+        }
     }
 
     @Override
@@ -63,12 +74,6 @@ public class LocalTracksFragment extends Fragment {
         listenUI();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        mTracks.clear();
-    }
-
     /**
      * Initialization of view elements.
      */
@@ -81,10 +86,19 @@ public class LocalTracksFragment extends Fragment {
      * Gets the user's local music tracks.
      */
     private void getLocalTracks() {
-        mTracks = getAudioList();
+        if (mTracks == null || mTracks.isEmpty()) mTracks = getAudioList();
         mPlaylistAdapter = new PlaylistAdapter(getActivity(), mTracks);
         ((MainActivity) getActivity()).getViewPagerAdapter().setTracks(mTracks);
         mListView.setAdapter(mPlaylistAdapter);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(LocalTracksFragment.class.getSimpleName(), "onSaveInstanceState");
+        if (mTracks != null) {
+            outState.putParcelableArrayList("tracks", mTracks);
+        }
     }
 
     /**
@@ -201,11 +215,7 @@ public class LocalTracksFragment extends Fragment {
             // TODO: NPE in the maximum track position
             AppData.sNextSongPath = AppData.sAudioPath[AppData.sTrackPosition + 1];
             playTrack(AppData.sAudioPath[AppData.sTrackPosition]);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IllegalArgumentException | IllegalStateException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -236,6 +246,7 @@ public class LocalTracksFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         Log.d(LocalTracksFragment.class.getSimpleName(), "onDestroy");
+        mTracks.clear();
         AppData.sAudioPlayer.stop();
     }
 }
